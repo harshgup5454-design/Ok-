@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Boost Game Apk</string>
+    <!-- Official Production Google AdMob App ID -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-9880038173911569~6505410503</string>
+    <!-- Configurable Google Play Console product IDs (configure matching products in Play Console before release) -->
+    <string name="billing_product_pro_monthly" translatable="false">gameboost_pro_monthly</string>
+    <string name="billing_product_pro_yearly" translatable="false">gameboost_pro_yearly</string>
+    <string name="billing_product_pro_one_time" translatable="false"></string>
+</resources>
