@@ -1,4 +1,4 @@
-name: Build and Release GAMEBOOST APK
+name: Build and Release ZeroX Boost APK
 
 on:
   push:
@@ -18,11 +18,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -39,13 +39,13 @@ jobs:
         run: gradle :app:assembleDebug --no-daemon
 
       - name: Package APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk GAMEBOOST-Final-Debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk ZeroX-Boost-Debug.apk
 
       - name: Upload APK workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GAMEBOOST-Final-Debug
-          path: GAMEBOOST-Final-Debug.apk
+          name: ZeroX-Boost-Debug
+          path: ZeroX-Boost-Debug.apk
 
       - name: Publish APK to GitHub Releases
         env:
@@ -53,9 +53,9 @@ jobs:
         run: |
           TAG="latest"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" GAMEBOOST-Final-Debug.apk --clobber
+            gh release upload "$TAG" ZeroX-Boost-Debug.apk --clobber
           else
-            gh release create "$TAG" GAMEBOOST-Final-Debug.apk \
-              --title "GAMEBOOST APK" \
-              --notes "Direct APK download for GAMEBOOST."
+            gh release create "$TAG" ZeroX-Boost-Debug.apk \
+              --title "ZeroX Boost APK" \
+              --notes "Direct APK download for ZeroX Boost."
           fi

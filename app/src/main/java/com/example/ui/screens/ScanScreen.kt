@@ -422,7 +422,7 @@ fun ScanScreen(
                                     containerColor = DarkSurface,
                                     borderColor = DarkSurfaceBorder
                                 ) {
-                                    Text("GAMEBOOST Accessible Footprint", style = MaterialTheme.typography.titleSmall, color = TextPrimary)
+                                    Text("ZeroX Boost Accessible Footprint", style = MaterialTheme.typography.titleSmall, color = TextPrimary)
 
                                     SpecRow("Internal Cache", DeviceDiagnosticsEngine.formatBytes(storage.appInternalCacheBytes))
                                     SpecRow("External Cache", DeviceDiagnosticsEngine.formatBytes(storage.appExternalCacheBytes))
@@ -518,7 +518,7 @@ fun ScanScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                             SectionLabel(text = "Interactive Touchscreen Test Canvas", accentColor = NeonCyan)
                             Text(
-                                "Test touch coordinates, screen-edge registration, and swipe velocity within GAMEBOOST.",
+                                "Test touch coordinates, screen-edge registration, and swipe velocity within ZeroX Boost.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -730,7 +730,7 @@ fun ScanScreen(
                                             IconButton(
                                                 onClick = {
                                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                                    clipboard.setPrimaryClip(ClipData.newPlainText("GAMEBOOST Report", report.exportableText))
+                                                    clipboard.setPrimaryClip(ClipData.newPlainText("ZeroX Boost Report", report.exportableText))
                                                     Toast.makeText(context, "Report copied to clipboard", Toast.LENGTH_SHORT).show()
                                                 },
                                                 modifier = Modifier.size(44.dp)

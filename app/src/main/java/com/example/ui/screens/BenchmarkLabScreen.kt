@@ -111,7 +111,7 @@ fun BenchmarkLabScreen(
                                 color = TextPrimary
                             )
                             Text(
-                                text = "Workloads measure GAMEBOOST's internal compute, memory copy, and UI canvas rendering throughput under live OS thermal monitoring. They do not simulate or fabricate external game FPS.",
+                                text = "Workloads measure ZeroX Boost's internal compute, memory copy, and UI canvas rendering throughput under live OS thermal monitoring. They do not simulate or fabricate external game FPS.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )

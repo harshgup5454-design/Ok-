@@ -219,7 +219,7 @@ fun AimIntelligenceScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "Paste exported GAMEBOOST profile JSON below to save & apply.",
+                        text = "Paste exported ZeroX Boost profile JSON below to save & apply.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -462,7 +462,7 @@ fun SensitivityCalculatorSection(
 
             Text(text = "Transparent Algorithmic Rationale & Notice", style = MaterialTheme.typography.labelMedium, color = TextSecondary)
             Text(
-                text = "${currentProfile.mathematicalRationale}\n\nDisclaimer: GAMEBOOST touch recommendations are mathematical baselines. Always verify and test sensitivity in your in-game training room.",
+                text = "${currentProfile.mathematicalRationale}\n\nDisclaimer: ZeroX Boost touch recommendations are mathematical baselines. Always verify and test sensitivity in your in-game training room.",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )

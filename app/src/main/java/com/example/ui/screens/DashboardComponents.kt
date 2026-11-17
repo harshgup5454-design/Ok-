@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.*
 import com.example.ui.components.StatusPillBadge
+import com.example.ui.components.TelemetryArcGauge
 import com.example.ui.theme.*
 import java.util.Locale
 
@@ -50,13 +52,17 @@ fun DashboardProtectionBanner(
             .testTag("dashboard_protection_card"),
         shape = RoundedCornerShape(18.dp),
         color = DarkSurface,
-        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.45f))
+        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.42f))
     ) {
         Column(
             modifier = Modifier
-                .background(accentColor.copy(alpha = 0.05f))
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .background(
+                    Brush.horizontalGradient(
+                        listOf(accentColor.copy(alpha = 0.08f), Color.Transparent)
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -76,7 +82,8 @@ fun DashboardProtectionBanner(
                     Surface(
                         shape = RoundedCornerShape(10.dp),
                         color = accentColor.copy(alpha = 0.14f),
-                        modifier = Modifier.size(38.dp)
+                        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.30f)),
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
@@ -87,26 +94,28 @@ fun DashboardProtectionBanner(
                                 },
                                 contentDescription = protectionStatus.headline,
                                 tint = accentColor,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                         }
                     }
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                         Text(
                             text = protectionStatus.headline,
                             style = MaterialTheme.typography.titleSmall,
                             color = TextPrimary,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Battery: ${protectionStatus.batteryHealthLabel}",
+                            text = "Battery Health: ${protectionStatus.batteryHealthLabel}",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
                     }
                 }
 
+                Spacer(modifier = Modifier.width(8.dp))
                 StatusPillBadge(text = readinessLabel, color = accentColor, showDot = true)
             }
 
@@ -146,65 +155,69 @@ fun VisualGaugeCard(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(18.dp),
         color = DarkSurface,
         border = BorderStroke(1.dp, DarkSurfaceBorder)
     ) {
-        Column(
-            modifier = Modifier.padding(13.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = TextSecondary
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(accentColor.copy(alpha = 0.10f), Color.Transparent),
+                        radius = 280f
+                    )
                 )
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = accentColor.copy(alpha = 0.14f),
-                    modifier = Modifier.size(26.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(11.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    TelemetryArcGauge(
+                        progress = progress,
+                        accentColor = accentColor,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(30.dp)
+                    ) {
                         Icon(
                             imageVector = icon,
                             contentDescription = title,
                             tint = accentColor,
-                            modifier = Modifier.size(15.dp)
+                            modifier = Modifier.size(13.dp)
                         )
                     }
                 }
+
+                Text(
+                    text = value,
+                    style = TelemetryMonoStyle.copy(fontSize = 18.sp),
+                    color = TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-
-            Text(
-                text = value,
-                style = TelemetryMonoStyle.copy(fontSize = 18.sp),
-                color = TextPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            LinearProgressIndicator(
-                progress = { progress.coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .clip(RoundedCornerShape(2.dp)),
-                color = accentColor,
-                trackColor = DarkSurfaceVariant
-            )
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall,
-                color = TextMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
@@ -227,7 +240,7 @@ fun DashboardQuickLaunchAndRecentCard(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(20.dp),
         color = DarkSurface,
         border = BorderStroke(1.dp, DarkSurfaceBorder)
     ) {
@@ -243,16 +256,17 @@ fun DashboardQuickLaunchAndRecentCard(
                 ) {
                     Row(
                         modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(
-                            shape = RoundedCornerShape(10.dp),
-                            color = NeonCyan.copy(alpha = 0.14f),
-                            modifier = Modifier.size(38.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            color = NeonPurple.copy(alpha = 0.16f),
+                            border = BorderStroke(1.dp, NeonPurple.copy(alpha = 0.35f)),
+                            modifier = Modifier.size(42.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.SportsEsports, contentDescription = null, tint = NeonCyan, modifier = Modifier.size(20.dp))
+                                Icon(Icons.Default.SportsEsports, contentDescription = null, tint = NeonPurpleBright, modifier = Modifier.size(21.dp))
                             }
                         }
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -260,13 +274,16 @@ fun DashboardQuickLaunchAndRecentCard(
                                 text = featuredGame.name,
                                 style = MaterialTheme.typography.titleSmall,
                                 color = TextPrimary,
+                                fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = "${featuredGame.performanceMode.displayName} • ${featuredGame.fpsLock} FPS Target",
                                 color = NeonCyan,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -282,7 +299,7 @@ fun DashboardQuickLaunchAndRecentCard(
                         Button(
                             onClick = { onLaunchGame(featuredGame) },
                             enabled = featuredGame.isInstalled,
-                            shape = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = NeonGreen),
                             modifier = Modifier
                                 .heightIn(min = 48.dp)
@@ -324,7 +341,7 @@ fun DashboardQuickLaunchAndRecentCard(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Default.History, contentDescription = null, tint = NeonPurple, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.History, contentDescription = null, tint = NeonPurpleBright, modifier = Modifier.size(16.dp))
                         Text(
                             text = String.format(Locale.US, "Recent: %s • %dm %02ds • %s", latestSession.gameTitle, mins, secs, tempLabel),
                             color = TextSecondary,

@@ -15,18 +15,18 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = NeonCyan,
-    onPrimary = Color.Black,
+    primary = NeonPurple,
+    onPrimary = Color.White,
     primaryContainer = DarkSurfaceVariant,
-    onPrimaryContainer = NeonCyanVariant,
-    secondary = GamingBlue,
-    onSecondary = Color.White,
+    onPrimaryContainer = NeonPurpleBright,
+    secondary = NeonCyan,
+    onSecondary = Color.Black,
     secondaryContainer = DarkSurfaceElevated,
     onSecondaryContainer = NeonCyanVariant,
-    tertiary = NeonPurple,
+    tertiary = GamingBlue,
     onTertiary = Color.White,
     tertiaryContainer = DarkSurfaceVariant,
-    onTertiaryContainer = NeonPurpleBright,
+    onTertiaryContainer = NeonCyanVariant,
     background = DarkBackground,
     onBackground = TextPrimary,
     surface = DarkSurface,
@@ -40,11 +40,11 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 val GameBoostShapes = Shapes(
-    extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(20.dp),
-    extraLarge = RoundedCornerShape(24.dp)
+    extraSmall = RoundedCornerShape(10.dp),
+    small = RoundedCornerShape(14.dp),
+    medium = RoundedCornerShape(18.dp),
+    large = RoundedCornerShape(22.dp),
+    extraLarge = RoundedCornerShape(26.dp)
 )
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {

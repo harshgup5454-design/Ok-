@@ -5,15 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -278,10 +283,24 @@ class MainActivity : ComponentActivity() {
                                 containerColor = DarkBackground,
                                 bottomBar = {
                                     Column {
-                                        HorizontalDivider(color = DarkSurfaceBorder, thickness = 1.dp)
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(1.dp)
+                                                .background(
+                                                    Brush.horizontalGradient(
+                                                        listOf(
+                                                            Color.Transparent,
+                                                            NeonPurple.copy(alpha = 0.55f),
+                                                            NeonCyan.copy(alpha = 0.55f),
+                                                            Color.Transparent
+                                                        )
+                                                    )
+                                                )
+                                        )
                                         NavigationBar(
-                                            containerColor = DarkSurface,
-                                            contentColor = NeonCyan,
+                                            containerColor = Color(0xFF080712),
+                                            contentColor = NeonPurpleBright,
                                             tonalElevation = 0.dp
                                         ) {
                                             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -314,11 +333,11 @@ class MainActivity : ComponentActivity() {
                                                         }
                                                     },
                                                     colors = NavigationBarItemDefaults.colors(
-                                                        selectedIconColor = NeonCyan,
-                                                        selectedTextColor = NeonCyan,
+                                                        selectedIconColor = NeonPurpleBright,
+                                                        selectedTextColor = TextPrimary,
                                                         unselectedIconColor = TextMuted,
                                                         unselectedTextColor = TextMuted,
-                                                        indicatorColor = GamingBlue.copy(alpha = 0.22f)
+                                                        indicatorColor = NeonPurple.copy(alpha = 0.22f)
                                                     )
                                                 )
                                             }

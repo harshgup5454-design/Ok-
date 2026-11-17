@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Boost Game Apk</string>
+    <string name="app_name">ZeroX Boost</string>
     <!-- Official Production Google AdMob App ID -->
     <string name="admob_app_id" translatable="false">ca-app-pub-9880038173911569~6505410503</string>
     <!-- Configurable Google Play Console product IDs (configure matching products in Play Console before release) -->

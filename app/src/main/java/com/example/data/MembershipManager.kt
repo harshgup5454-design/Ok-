@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.update
 
 enum class MembershipTier(val title: String) {
     FREE("Free Explorer"),
-    PREMIUM("GameBoost PRO")
+    PREMIUM("ZeroX Boost PRO")
 }
 
 data class EntitlementState(

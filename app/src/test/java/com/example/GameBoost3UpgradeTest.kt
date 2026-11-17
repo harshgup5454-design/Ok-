@@ -212,7 +212,7 @@ class GameBoost3UpgradeTest {
             }
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("GAMEBOOST 3.0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
         composeTestRule.onNodeWithTag("dashboard_protection_card").assertIsDisplayed()
         composeTestRule.onNodeWithTag("dashboard_lazy_column")
             .performScrollToNode(hasTestTag("dashboard_start_gaming_button"))

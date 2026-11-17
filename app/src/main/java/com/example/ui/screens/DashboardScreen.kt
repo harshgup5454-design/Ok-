@@ -157,10 +157,10 @@ fun DashboardScreen(
                     .weight(1f)
                     .fillMaxWidth()
                     .testTag("dashboard_lazy_column"),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // 1. BRANDING + REFRESH RATE + PRO BADGE
+                // 1. ZEROX BOOST BRAND HEADER
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -174,24 +174,30 @@ fun DashboardScreen(
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.gameboost_logo),
-                                contentDescription = "GAMEBOOST Logo",
-                                contentScale = ContentScale.Crop,
+                                contentDescription = "ZeroX Boost Logo",
+                                contentScale = ContentScale.Fit,
                                 modifier = Modifier
                                     .size(44.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .border(1.5.dp, NeonCyan.copy(alpha = 0.65f), RoundedCornerShape(12.dp))
+                                    .background(Color.Black)
+                                    .border(
+                                        1.5.dp,
+                                        Brush.linearGradient(listOf(NeonPurpleBright, NeonPurple, NeonCyan)),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(4.dp)
                                     .testTag("dashboard_brand_logo")
                             )
-                            Column {
+                            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                                 Text(
-                                    text = "GAMEBOOST 3.0",
+                                    text = "ZeroX BOOST",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = NeonCyan,
+                                    color = TextPrimary,
                                     fontWeight = FontWeight.Bold,
-                                    letterSpacing = 1.2.sp
+                                    letterSpacing = 1.1.sp
                                 )
                                 Text(
-                                    text = "${stats.deviceModel} • Android ${stats.androidVersion}",
+                                    text = stats.deviceModel,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = TextSecondary,
                                     maxLines = 1,
@@ -200,22 +206,33 @@ fun DashboardScreen(
                             }
                         }
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = if (isPremium) NeonPurple.copy(alpha = 0.2f) else DarkSurfaceElevated,
-                                border = BorderStroke(1.dp, if (isPremium) NeonPurple else DarkSurfaceBorderBright),
+                                shape = RoundedCornerShape(999.dp),
+                                color = if (isPremium) NeonPurple.copy(alpha = 0.22f) else DarkSurfaceElevated,
+                                border = BorderStroke(
+                                    1.dp,
+                                    if (isPremium) NeonPurpleBright else DarkSurfaceBorderBright
+                                ),
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(999.dp))
                                     .clickable { onNavigateToPremium() }
                                     .testTag("dashboard_pro_badge")
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(Icons.Default.Stars, contentDescription = "Pro", tint = NeonPurple, modifier = Modifier.size(13.dp))
+                                    Icon(
+                                        Icons.Default.Stars,
+                                        contentDescription = "Pro",
+                                        tint = NeonPurpleBright,
+                                        modifier = Modifier.size(13.dp)
+                                    )
                                     Text(
                                         text = if (isPremium) "PRO" else "GO PRO",
                                         color = NeonPurpleBright,
@@ -233,7 +250,7 @@ fun DashboardScreen(
                     }
                 }
 
-                // 2. GAMING READINESS & THERMAL PROTECTION BANNER
+                // 2. SYSTEM READINESS & THERMAL PROTECTION STRIP
                 item {
                     DashboardProtectionBanner(
                         protectionStatus = protectionStatus,
@@ -241,7 +258,7 @@ fun DashboardScreen(
                     )
                 }
 
-                // 3. REAL HARDWARE OVERVIEW TELEMETRY GRID
+                // 3. LIVE HARDWARE TELEMETRY 2x2 BENTO GRID
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -278,7 +295,7 @@ fun DashboardScreen(
                             VisualGaugeCard(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(18.dp))
                                     .clickable { onNavigateToNetwork() },
                                 title = "Network",
                                 value = if (networkStats.pingMs < 0) "Not Tested" else "${networkStats.pingMs} ms",
@@ -291,38 +308,94 @@ fun DashboardScreen(
                     }
                 }
 
-                // 4. SELECTED GAME PROFILE & PROMINENT SESSION LAUNCHER
+                // 4. ZEROX COMMAND DECK HERO (Game Target + Mode Segmented Control + Launch CTA)
                 item {
-                    GameBoostHeroCard {
+                    GameBoostHeroCard(
+                        accentStart = NeonPurple,
+                        accentEnd = NeonCyan,
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        // Top Row: Target selector + Autopilot Switch
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Tune, contentDescription = null, tint = NeonCyan, modifier = Modifier.size(18.dp))
-                                Text("Game Profile", style = MaterialTheme.typography.titleSmall, color = TextSecondary)
-                            }
                             Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = DarkSurfaceElevated,
+                                shape = RoundedCornerShape(12.dp),
+                                color = DarkBackground.copy(alpha = 0.72f),
                                 border = BorderStroke(1.dp, DarkSurfaceBorderBright),
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(12.dp))
                                     .clickable { isGameSelectorExpanded = !isGameSelectorExpanded }
                                     .testTag("dashboard_game_selector")
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(selectedGameName, color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.SportsEsports,
+                                            contentDescription = null,
+                                            tint = NeonPurpleBright,
+                                            modifier = Modifier.size(17.dp)
+                                        )
+                                        Text(
+                                            text = selectedGameName,
+                                            color = TextPrimary,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
                                     Icon(
                                         imageVector = if (isGameSelectorExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                                         contentDescription = "Select Game",
                                         tint = NeonCyan,
-                                        modifier = Modifier.size(16.dp)
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (autopilotState.isAutopilotEnabled) NeonCyan.copy(alpha = 0.12f) else DarkBackground.copy(alpha = 0.72f),
+                                border = BorderStroke(
+                                    1.dp,
+                                    if (autopilotState.isAutopilotEnabled) NeonCyan.copy(alpha = 0.45f) else DarkSurfaceBorder
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(start = 10.dp, end = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "AUTO",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (autopilotState.isAutopilotEnabled) NeonCyan else TextMuted,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Switch(
+                                        checked = autopilotState.isAutopilotEnabled,
+                                        onCheckedChange = onToggleAutopilot,
+                                        modifier = Modifier.testTag("dashboard_autopilot_switch"),
+                                        colors = SwitchDefaults.colors(
+                                            checkedThumbColor = Color.Black,
+                                            checkedTrackColor = NeonCyan,
+                                            uncheckedThumbColor = TextSecondary,
+                                            uncheckedTrackColor = DarkSurfaceVariant
+                                        )
                                     )
                                 }
                             }
@@ -332,9 +405,9 @@ fun DashboardScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(DarkSurfaceElevated)
-                                    .border(1.dp, DarkSurfaceBorder, RoundedCornerShape(12.dp))
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(DarkBackground.copy(alpha = 0.85f))
+                                    .border(1.dp, DarkSurfaceBorderBright, RoundedCornerShape(14.dp))
                                     .padding(6.dp),
                                 verticalArrangement = Arrangement.spacedBy(2.dp)
                             ) {
@@ -343,61 +416,49 @@ fun DashboardScreen(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clip(RoundedCornerShape(8.dp))
+                                            .clip(RoundedCornerShape(10.dp))
                                             .clickable {
                                                 selectedGameName = game
                                                 isGameSelectorExpanded = false
                                             }
-                                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                                            .padding(horizontal = 10.dp, vertical = 9.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(game, color = if (selectedGameName == game) NeonCyan else TextPrimary, fontSize = 12.sp)
+                                        Text(
+                                            text = game,
+                                            color = if (selectedGameName == game) NeonPurpleBright else TextPrimary,
+                                            fontSize = 12.5.sp,
+                                            fontWeight = if (selectedGameName == game) FontWeight.Bold else FontWeight.Normal
+                                        )
                                         if (selectedGameName == game) {
-                                            Icon(Icons.Default.Check, contentDescription = null, tint = NeonCyan, modifier = Modifier.size(15.dp))
+                                            Icon(Icons.Default.Check, contentDescription = null, tint = NeonPurpleBright, modifier = Modifier.size(16.dp))
                                         }
                                     }
                                 }
                             }
                         }
 
-                        // Profile Chips + Autopilot Toggle
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            listOf(
+                        // Clean Segmented Profile Switcher
+                        ZeroXSegmentedControl(
+                            options = listOf(
                                 ProfileType.SMOOTHNESS_FOCUS to "Stability",
                                 ProfileType.BALANCED to "Balanced",
                                 ProfileType.BATTERY_FRIENDLY to "Battery"
-                            ).forEach { (profile, label) ->
-                                FilterChip(
-                                    selected = autopilotState.activeProfile == profile,
-                                    onClick = { onSelectAutopilotProfile(profile) },
-                                    label = { Text(label, fontSize = 11.sp, maxLines = 1) },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = GamingBlue.copy(alpha = 0.25f),
-                                        selectedLabelColor = NeonCyan
-                                    ),
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                            Switch(
-                                checked = autopilotState.isAutopilotEnabled,
-                                onCheckedChange = onToggleAutopilot,
-                                modifier = Modifier.testTag("dashboard_autopilot_switch"),
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.Black,
-                                    checkedTrackColor = NeonCyan
-                                )
-                            )
-                        }
+                            ),
+                            selected = autopilotState.activeProfile,
+                            onSelect = onSelectAutopilotProfile,
+                            accentColor = NeonPurpleBright
+                        )
 
+                        // Session Action CTA
                         if (!isBenchmarking) {
                             PrimaryGradientButton(
                                 text = "START GAMING SESSION",
                                 icon = Icons.Default.FlashOn,
+                                startColor = GamingBlue,
+                                endColor = NeonPurpleBright,
+                                contentColor = Color.White,
                                 onClick = {
                                     if (onStartGamingSession != null) {
                                         onStartGamingSession(
@@ -413,7 +474,7 @@ fun DashboardScreen(
                                             selectedGameName,
                                             autopilotState.activeProfile.displayName,
                                             "PowerManager Thermal Telemetry",
-                                            "Gaming session started from Command Center."
+                                            "Gaming session started from ZeroX Boost."
                                         )
                                     }
                                 },
@@ -422,12 +483,12 @@ fun DashboardScreen(
                         } else {
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(14.dp),
-                                color = DarkSurfaceElevated,
+                                shape = RoundedCornerShape(16.dp),
+                                color = DarkBackground.copy(alpha = 0.85f),
                                 border = BorderStroke(1.dp, NeonGreen.copy(alpha = 0.65f))
                             ) {
                                 Column(
-                                    modifier = Modifier.padding(12.dp),
+                                    modifier = Modifier.padding(14.dp),
                                     verticalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
                                     Row(
@@ -437,9 +498,9 @@ fun DashboardScreen(
                                     ) {
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                             Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(NeonGreen))
-                                            Text("SESSION ACTIVE", color = NeonGreen, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                            Text("SESSION ACTIVE", color = NeonGreen, fontWeight = FontWeight.Bold, fontSize = 12.sp, letterSpacing = 0.8.sp)
                                         }
-                                        Text(formattedSessionTime, style = TelemetryMonoStyle.copy(fontSize = 18.sp), color = TextPrimary)
+                                        Text(formattedSessionTime, style = TelemetryMonoStyle.copy(fontSize = 20.sp), color = TextPrimary)
                                     }
 
                                     Row(
@@ -451,7 +512,8 @@ fun DashboardScreen(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .heightIn(min = 48.dp),
-                                            shape = RoundedCornerShape(10.dp),
+                                            shape = RoundedCornerShape(12.dp),
+                                            border = BorderStroke(1.dp, NeonCyan.copy(alpha = 0.55f)),
                                             colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonCyan)
                                         ) {
                                             Text("Open HUD", fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -462,7 +524,7 @@ fun DashboardScreen(
                                                 .weight(1.3f)
                                                 .heightIn(min = 48.dp)
                                                 .testTag("dashboard_stop_gaming_button"),
-                                            shape = RoundedCornerShape(10.dp),
+                                            shape = RoundedCornerShape(12.dp),
                                             colors = ButtonDefaults.buttonColors(containerColor = NeonRed.copy(alpha = 0.2f)),
                                             border = BorderStroke(1.dp, NeonRed.copy(alpha = 0.7f))
                                         ) {
@@ -477,9 +539,9 @@ fun DashboardScreen(
                     }
                 }
 
-                // 5. GAMING SPACE & QUICK TOOLS SHORTCUT DECK
+                // 5. QUICK GAMING UTILITIES DECK
                 item {
-                    SectionLabel("Quick Gaming Utilities", accentColor = ElectricBlue)
+                    SectionLabel("Quick Utilities", accentColor = NeonPurpleBright)
                 }
 
                 item {
@@ -487,7 +549,7 @@ fun DashboardScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         DashboardToolShortcutTile(
                             icon = Icons.Default.SportsEsports,
@@ -543,7 +605,7 @@ fun DashboardScreen(
                 item {
                     GameBoostSurfaceCard(
                         modifier = Modifier.testTag("dashboard_sidebar_quick_card"),
-                        borderColor = if (isOverlayRunning) NeonCyan.copy(alpha = 0.5f) else DarkSurfaceBorder
+                        borderColor = if (isOverlayRunning) NeonCyan.copy(alpha = 0.50f) else DarkSurfaceBorder
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -551,14 +613,15 @@ fun DashboardScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Surface(
-                                    modifier = Modifier.size(38.dp),
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = if (isOverlayRunning) NeonCyan.copy(alpha = 0.16f) else DarkSurfaceElevated
+                                    modifier = Modifier.size(40.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = if (isOverlayRunning) NeonCyan.copy(alpha = 0.16f) else DarkSurfaceElevated,
+                                    border = BorderStroke(1.dp, if (isOverlayRunning) NeonCyan.copy(alpha = 0.35f) else DarkSurfaceBorder)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
@@ -573,7 +636,8 @@ fun DashboardScreen(
                                     Text(
                                         text = "Floating Gaming Sidebar",
                                         style = MaterialTheme.typography.titleSmall,
-                                        color = TextPrimary
+                                        color = TextPrimary,
+                                        fontWeight = FontWeight.Bold
                                     )
                                     Text(
                                         text = when {
@@ -600,7 +664,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.Tune,
                                     contentDescription = "Sidebar Settings",
-                                    tint = NeonCyan,
+                                    tint = NeonPurpleBright,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -665,7 +729,8 @@ fun DashboardScreen(
                                     .heightIn(min = 48.dp)
                                     .testTag("dashboard_hud_button"),
                                 shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonCyan)
+                                border = BorderStroke(1.dp, DarkSurfaceBorderBright),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary)
                             ) {
                                 Text("Preview", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
@@ -785,7 +850,7 @@ fun DashboardScreen(
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = "GAMEBOOST needs 'Display over other apps' permission to automatically show the floating gaming handle above ${sessionLaunchPrompt.gameTitle}.",
+                            text = "ZeroX Boost needs 'Display over other apps' permission to automatically show the floating gaming handle above ${sessionLaunchPrompt.gameTitle}.",
                             color = TextSecondary,
                             fontSize = 12.5.sp,
                             lineHeight = 18.sp
@@ -933,32 +998,40 @@ private fun DashboardToolShortcutTile(
 ) {
     Surface(
         modifier = Modifier
-            .width(102.dp)
-            .heightIn(min = 82.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .width(104.dp)
+            .heightIn(min = 86.dp)
+            .clip(RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(18.dp),
         color = DarkSurface,
         border = BorderStroke(1.dp, DarkSurfaceBorder)
     ) {
         Column(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        listOf(tint.copy(alpha = 0.08f), Color.Transparent)
+                    )
+                )
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Surface(
-                shape = RoundedCornerShape(10.dp),
-                color = tint.copy(alpha = 0.14f),
-                modifier = Modifier.size(34.dp)
+                shape = RoundedCornerShape(12.dp),
+                color = tint.copy(alpha = 0.16f),
+                border = BorderStroke(1.dp, tint.copy(alpha = 0.32f)),
+                modifier = Modifier.size(38.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(18.dp))
+                    Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(19.dp))
                 }
             }
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
                 color = TextPrimary,
+                fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

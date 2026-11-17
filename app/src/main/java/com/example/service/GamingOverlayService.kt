@@ -228,7 +228,7 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                 OverlayStartResult(true, "Overlay start requested")
             } catch (t: Throwable) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && t is ForegroundServiceStartNotAllowedException) {
-                    val msg = "Android restricted starting the overlay from background. Open GAMEBOOST to launch the floating handle."
+                    val msg = "Android restricted starting the overlay from background. Open ZeroX Boost to launch the floating handle."
                     logEvent("ForegroundServiceStartNotAllowedException: ${t.message}")
                     _isSessionOwnedOverlay.value = false
                     _lastOverlayError.value = msg
@@ -415,10 +415,10 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channel = NotificationChannel(
                     NOTIFICATION_CHANNEL_ID,
-                    "GameBoost Global Overlay",
+                    "ZeroX Boost Global Overlay",
                     NotificationManager.IMPORTANCE_LOW
                 ).apply {
-                    description = "Keeps the GameBoost floating gaming sidebar active over games"
+                    description = "Keeps the ZeroX Boost floating gaming sidebar active over games"
                     setShowBadge(false)
                 }
                 val manager = getSystemService(NotificationManager::class.java)
@@ -433,7 +433,7 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             )
 
             val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("GAMEBOOST Sidebar Ready")
+                .setContentTitle("ZeroX Boost Sidebar Ready")
                 .setContentText("Tap or slide the edge handle over your game to open controls.")
                 .setSmallIcon(R.drawable.ic_notification_gamepad)
                 .setContentIntent(pendingIntent)
@@ -737,7 +737,7 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             aimTrainerStatusHint = if (fgPkg != null) {
                 "Queued — Aim Trainer opens when you exit the game."
             } else {
-                "Exit your game & return to GAMEBOOST to open Aim Trainer."
+                "Exit your game & return to ZeroX Boost to open Aim Trainer."
             }
             logEvent("Aim Trainer deferred while game is active (fg=${fgPkg ?: "unknown"})")
         } else {

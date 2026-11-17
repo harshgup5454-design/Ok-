@@ -176,6 +176,9 @@ fun GamingSessionScreen(
                         PrimaryGradientButton(
                             text = "BEGIN LIVE SESSION",
                             icon = Icons.Default.FlashOn,
+                            startColor = Color(0xFF7C3AED),
+                            endColor = Color(0xFFD946EF),
+                            contentColor = Color.White,
                             onClick = onStartSession,
                             modifier = Modifier.testTag("session_hud_start_button")
                         )

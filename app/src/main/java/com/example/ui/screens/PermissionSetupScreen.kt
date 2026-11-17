@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -24,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -119,7 +121,7 @@ fun PermissionSetupScreen(
         } else {
             val opened = PermissionManager.openPermissionSettings(context, item.type)
             if (!opened) {
-                settingsLaunchHint = "Could not open system screen directly. Open Android Settings > Apps > Boost Game."
+                settingsLaunchHint = "Could not open system screen directly. Open Android Settings > Apps > ZeroX Boost."
             }
         }
     }
@@ -170,7 +172,7 @@ fun PermissionSetupScreen(
                                 }
 
                                 PrimaryGradientButton(
-                                    text = if (audit.hasOverlayPermission) "Enter GAMEBOOST" else "Continue",
+                                    text = if (audit.hasOverlayPermission) "Enter ZeroX Boost" else "Continue",
                                     onClick = {
                                         OnboardingPreferences.setCompleted(context, true)
                                         onFinishSetup()
@@ -216,23 +218,29 @@ fun PermissionSetupScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.gameboost_logo),
-                                        contentDescription = "GAMEBOOST",
-                                        contentScale = ContentScale.Crop,
+                                        contentDescription = "ZeroX Boost",
+                                        contentScale = ContentScale.Fit,
                                         modifier = Modifier
                                             .size(38.dp)
                                             .clip(RoundedCornerShape(10.dp))
-                                            .border(1.5.dp, NeonCyan.copy(alpha = 0.65f), RoundedCornerShape(10.dp))
+                                            .background(Color.Black)
+                                            .border(
+                                                1.5.dp,
+                                                Brush.linearGradient(listOf(NeonPurple, NeonCyan)),
+                                                RoundedCornerShape(10.dp)
+                                            )
+                                            .padding(3.dp)
                                     )
                                     Column {
                                         Text(
                                             text = "FIRST-TIME SETUP",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = NeonCyan,
+                                            color = NeonPurpleBright,
                                             letterSpacing = 1.2.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Welcome to GAMEBOOST",
+                                            text = "Welcome to ZeroX Boost",
                                             style = MaterialTheme.typography.titleLarge,
                                             color = TextPrimary
                                         )

@@ -1,12 +1,16 @@
 package com.example.ui.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,8 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -35,10 +42,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * Full-screen deep navy canvas with a subtle ambient radial glow at the top,
- * keeping GAMEBOOST's UI futuristic, dark, and refined without visual noise.
+ * Full-screen ZeroX obsidian canvas with dual-tone ambient violet & cyan spotlight
+ * and ultra-subtle precision architectural lines for a clean flagship esports aesthetic.
  */
 @Composable
 fun GameBoostAppBackground(
@@ -53,24 +63,51 @@ fun GameBoostAppBackground(
                     colors = listOf(
                         DeepNavyBg,
                         DarkBackground,
-                        Color(0xFF04060D)
+                        Color(0xFF030306)
                     )
                 )
             )
             .drawBehind {
+                // Top-left signature ZeroX violet-magenta nebula spotlight
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            GamingBlue.copy(alpha = 0.14f),
-                            NeonPurple.copy(alpha = 0.05f),
+                            NeonPurple.copy(alpha = 0.17f),
+                            GamingBlue.copy(alpha = 0.06f),
                             Color.Transparent
                         ),
-                        center = Offset(size.width * 0.25f, 0f),
+                        center = Offset(size.width * 0.16f, 0f),
                         radius = size.width * 0.85f
                     ),
                     radius = size.width * 0.85f,
-                    center = Offset(size.width * 0.25f, 0f)
+                    center = Offset(size.width * 0.16f, 0f)
                 )
+                // Top-right subtle ice-cyan telemetry aura
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            NeonCyan.copy(alpha = 0.08f),
+                            Color.Transparent
+                        ),
+                        center = Offset(size.width * 0.94f, size.height * 0.10f),
+                        radius = size.width * 0.60f
+                    ),
+                    radius = size.width * 0.60f,
+                    center = Offset(size.width * 0.94f, size.height * 0.10f)
+                )
+                // Ultra-faint architectural horizon accent lines
+                val gridAlpha = 0.022f
+                val step = 68.dp.toPx()
+                var y = step
+                while (y < size.height * 0.40f) {
+                    drawLine(
+                        color = Color.White.copy(alpha = gridAlpha),
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = 1f
+                    )
+                    y += step
+                }
             },
         content = content
     )
@@ -81,7 +118,7 @@ fun GameBoostScreenHeader(
     title: String,
     subtitle: String,
     icon: ImageVector? = null,
-    iconTint: Color = NeonCyan,
+    iconTint: Color = NeonPurpleBright,
     onBackClick: (() -> Unit)? = null,
     backButtonTestTag: String? = null,
     trailingContent: (@Composable () -> Unit)? = null
@@ -95,17 +132,22 @@ fun GameBoostScreenHeader(
     ) {
         Row(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (onBackClick != null) {
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     color = DarkSurfaceElevated,
-                    border = BorderStroke(1.dp, DarkSurfaceBorder),
+                    border = BorderStroke(
+                        1.dp,
+                        Brush.linearGradient(
+                            listOf(NeonPurple.copy(alpha = 0.50f), DarkSurfaceBorderBright)
+                        )
+                    ),
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(14.dp))
                         .clickable(onClick = onBackClick)
                         .let { if (backButtonTestTag != null) it.testTag(backButtonTestTag) else it }
                 ) {
@@ -113,19 +155,28 @@ fun GameBoostScreenHeader(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = NeonCyan,
+                            tint = TextPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                 }
             } else if (icon != null) {
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = iconTint.copy(alpha = 0.12f),
-                    border = BorderStroke(1.dp, iconTint.copy(alpha = 0.35f)),
-                    modifier = Modifier.size(42.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    color = DarkSurfaceElevated,
+                    border = BorderStroke(1.dp, iconTint.copy(alpha = 0.45f)),
+                    modifier = Modifier.size(44.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    listOf(iconTint.copy(alpha = 0.24f), Color.Transparent)
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(
                             imageVector = icon,
                             contentDescription = null,
@@ -142,6 +193,7 @@ fun GameBoostScreenHeader(
                     style = MaterialTheme.typography.headlineSmall,
                     color = TextPrimary,
                     fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.4.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -167,7 +219,7 @@ fun GameBoostSurfaceCard(
     modifier: Modifier = Modifier,
     containerColor: Color = DarkSurface,
     borderColor: Color = DarkSurfaceBorder,
-    cornerRadius: Dp = 18.dp,
+    cornerRadius: Dp = 20.dp,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -178,7 +230,16 @@ fun GameBoostSurfaceCard(
         border = BorderStroke(1.dp, borderColor)
     ) {
         Column(
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.032f),
+                            Color.Transparent
+                        )
+                    )
+                )
+                .padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             content = content
         )
@@ -188,10 +249,10 @@ fun GameBoostSurfaceCard(
 @Composable
 fun GameBoostHeroCard(
     modifier: Modifier = Modifier,
-    accentStart: Color = GamingBlue,
+    accentStart: Color = NeonPurple,
     accentEnd: Color = NeonCyan,
-    cornerRadius: Dp = 20.dp,
-    contentPadding: PaddingValues = PaddingValues(16.dp),
+    cornerRadius: Dp = 24.dp,
+    contentPadding: PaddingValues = PaddingValues(18.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
@@ -201,17 +262,22 @@ fun GameBoostHeroCard(
         border = BorderStroke(
             width = 1.dp,
             brush = Brush.horizontalGradient(
-                listOf(accentStart.copy(alpha = 0.65f), accentEnd.copy(alpha = 0.65f), NeonPurple.copy(alpha = 0.45f))
+                listOf(
+                    accentStart.copy(alpha = 0.72f),
+                    NeonPurpleBright.copy(alpha = 0.45f),
+                    accentEnd.copy(alpha = 0.65f)
+                )
             )
         )
     ) {
         Column(
             modifier = Modifier
                 .background(
-                    Brush.verticalGradient(
+                    Brush.linearGradient(
                         listOf(
-                            accentStart.copy(alpha = 0.08f),
-                            Color.Transparent
+                            accentStart.copy(alpha = 0.14f),
+                            DarkSurfaceElevated.copy(alpha = 0.55f),
+                            accentEnd.copy(alpha = 0.05f)
                         )
                     )
                 )
@@ -222,16 +288,153 @@ fun GameBoostHeroCard(
     }
 }
 
+/**
+ * Clean 240-degree radial telemetry arc gauge drawn via Compose Canvas.
+ */
+@Composable
+fun TelemetryArcGauge(
+    progress: Float,
+    accentColor: Color,
+    modifier: Modifier = Modifier,
+    strokeWidth: Dp = 4.5.dp,
+    trackColor: Color = DarkSurfaceVariant,
+    centerContent: @Composable BoxScope.() -> Unit = {}
+) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        animationSpec = spring(dampingRatio = 0.8f, stiffness = 320f),
+        label = "arc_progress"
+    )
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokePx = strokeWidth.toPx()
+            val inset = strokePx / 2f
+            val arcSize = Size(size.width - strokePx, size.height - strokePx)
+            val startAngle = 150f
+            val sweepTotal = 240f
+
+            // Track arc
+            drawArc(
+                color = trackColor,
+                startAngle = startAngle,
+                sweepAngle = sweepTotal,
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(width = strokePx, cap = StrokeCap.Round)
+            )
+
+            // Active glowing gradient arc
+            val activeSweep = (sweepTotal * animatedProgress).coerceAtLeast(if (animatedProgress > 0f) 6f else 0f)
+            if (activeSweep > 0f) {
+                drawArc(
+                    brush = Brush.sweepGradient(
+                        listOf(
+                            accentColor.copy(alpha = 0.7f),
+                            accentColor,
+                            accentColor
+                        )
+                    ),
+                    startAngle = startAngle,
+                    sweepAngle = activeSweep,
+                    useCenter = false,
+                    topLeft = Offset(inset, inset),
+                    size = arcSize,
+                    style = Stroke(width = strokePx, cap = StrokeCap.Round)
+                )
+
+                // Tip indicator dot
+                val tipAngleRad = ((startAngle + activeSweep) * PI / 180.0).toFloat()
+                val radiusX = arcSize.width / 2f
+                val radiusY = arcSize.height / 2f
+                val cx = size.width / 2f + radiusX * cos(tipAngleRad)
+                val cy = size.height / 2f + radiusY * sin(tipAngleRad)
+                drawCircle(
+                    color = Color.White,
+                    radius = strokePx * 0.55f,
+                    center = Offset(cx, cy)
+                )
+            }
+        }
+        centerContent()
+    }
+}
+
+/**
+ * Clean glass-pill segmented selector for modes/tabs without cramped filter chips.
+ */
+@Composable
+fun <T> ZeroXSegmentedControl(
+    options: List<Pair<T, String>>,
+    selected: T,
+    onSelect: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    accentColor: Color = NeonPurpleBright
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = DarkBackground.copy(alpha = 0.75f),
+        border = BorderStroke(1.dp, DarkSurfaceBorder)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            options.forEach { (item, label) ->
+                val isSelected = item == selected
+                val bgColor by animateColorAsState(
+                    targetValue = if (isSelected) accentColor.copy(alpha = 0.22f) else Color.Transparent,
+                    label = "seg_bg"
+                )
+                val borderColor by animateColorAsState(
+                    targetValue = if (isSelected) accentColor.copy(alpha = 0.55f) else Color.Transparent,
+                    label = "seg_border"
+                )
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable { onSelect(item) },
+                    shape = RoundedCornerShape(10.dp),
+                    color = bgColor,
+                    border = if (isSelected) BorderStroke(1.dp, borderColor) else null
+                ) {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (isSelected) TextPrimary else TextSecondary,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun SectionLabel(
     text: String,
-    accentColor: Color = TextSecondary,
+    accentColor: Color = NeonPurple,
     trailingAction: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .padding(top = 4.dp, bottom = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -241,16 +444,20 @@ fun SectionLabel(
         ) {
             Box(
                 modifier = Modifier
-                    .width(3.dp)
+                    .width(3.5.dp)
                     .height(14.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(accentColor)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(accentColor, NeonPurpleBright.copy(alpha = 0.70f))
+                        )
+                    )
             )
             Text(
                 text = text.uppercase(),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary,
-                letterSpacing = 1.1.sp,
+                letterSpacing = 1.3.sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -271,7 +478,7 @@ fun StatusPillBadge(
         modifier = modifier,
         shape = RoundedCornerShape(999.dp),
         color = color.copy(alpha = 0.14f),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.35f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.42f))
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -306,16 +513,16 @@ fun PrimaryGradientButton(
     icon: ImageVector? = null,
     enabled: Boolean = true,
     startColor: Color = GamingBlue,
-    endColor: Color = NeonCyan,
-    contentColor: Color = Color.Black
+    endColor: Color = NeonPurpleBright,
+    contentColor: Color = Color.White
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 50.dp),
-        shape = RoundedCornerShape(14.dp),
+            .heightIn(min = 52.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             disabledContainerColor = DarkSurfaceVariant,
@@ -326,10 +533,10 @@ fun PrimaryGradientButton(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 50.dp)
-                .clip(RoundedCornerShape(14.dp))
+                .heightIn(min = 52.dp)
+                .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (enabled) Brush.horizontalGradient(listOf(startColor, endColor))
+                    if (enabled) Brush.horizontalGradient(listOf(startColor, NeonPurple, endColor))
                     else Brush.horizontalGradient(listOf(DarkSurfaceVariant, DarkSurfaceVariant))
                 ),
             contentAlignment = Alignment.Center
@@ -352,7 +559,7 @@ fun PrimaryGradientButton(
                     color = if (enabled) contentColor else TextMuted,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.6.sp
+                    letterSpacing = 0.8.sp
                 )
             }
         }
@@ -365,7 +572,7 @@ fun GameBoostEmptyState(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
-    accentColor: Color = NeonCyan,
+    accentColor: Color = NeonPurpleBright,
     actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null
 ) {
@@ -383,8 +590,8 @@ fun GameBoostEmptyState(
             Surface(
                 modifier = Modifier.size(64.dp),
                 shape = CircleShape,
-                color = accentColor.copy(alpha = 0.12f),
-                border = BorderStroke(1.dp, accentColor.copy(alpha = 0.35f))
+                color = accentColor.copy(alpha = 0.14f),
+                border = BorderStroke(1.dp, accentColor.copy(alpha = 0.38f))
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -417,7 +624,7 @@ fun GameBoostEmptyState(
                 ) {
                     Text(
                         text = actionLabel,
-                        color = Color.Black,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )
@@ -452,7 +659,7 @@ fun GameBoostLoadingSkeleton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp),
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(16.dp),
                 color = DarkSurfaceVariant.copy(alpha = alpha),
                 border = BorderStroke(1.dp, DarkSurfaceBorder.copy(alpha = 0.5f))
             ) {}
@@ -472,7 +679,7 @@ fun GameBoostErrorBanner(
     val tint = if (isWarning) NeonOrange else NeonRed
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(16.dp),
         color = tint.copy(alpha = 0.12f),
         border = BorderStroke(1.dp, tint.copy(alpha = 0.45f))
     ) {

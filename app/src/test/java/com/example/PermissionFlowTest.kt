@@ -80,7 +80,7 @@ class PermissionFlowTest {
 
         assertTrue(OnboardingPreferences.isCompleted(ctx))
         composeActivityRule.onNodeWithTag("permission_setup_screen").assertDoesNotExist()
-        composeActivityRule.onNodeWithText("GAMEBOOST 3.0").assertIsDisplayed()
+        composeActivityRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
 
         // Subsequent launch must NOT repeat onboarding screen
         val relaunchScenario = Robolectric.buildActivity(MainActivity::class.java).create().start().resume()
@@ -127,7 +127,7 @@ class PermissionFlowTest {
         composeActivityRule.onNodeWithTag("onboarding_continue_button").performClick()
         composeActivityRule.waitForIdle()
         assertTrue(OnboardingPreferences.isCompleted(ctx))
-        composeActivityRule.onNodeWithText("GAMEBOOST 3.0").assertIsDisplayed()
+        composeActivityRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
     }
 
     @Test

@@ -101,25 +101,18 @@ fun ReportsScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = "FPS Validation & Telemetry Reports",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = TextPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Transparent performance benchmarking comparing thermal rise, battery drain, and observed FPS under controlled test conditions.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
-                    )
-                }
+                GameBoostScreenHeader(
+                    title = "FPS Validation & Telemetry Reports",
+                    subtitle = "Transparent thermal rise, battery drain & observed FPS validation",
+                    icon = Icons.Default.Assessment,
+                    iconTint = NeonPurpleBright
+                )
             }
 
             // Live Benchmark Session Recorder Card
             item {
                 GameBoostHeroCard(
-                    accentStart = if (isBenchmarking) NeonRed else GamingBlue,
+                    accentStart = if (isBenchmarking) NeonRed else NeonPurple,
                     accentEnd = NeonCyan
                 ) {
                     Row(
@@ -134,7 +127,7 @@ fun ReportsScreen(
                             Icon(
                                 imageVector = Icons.Default.Timeline,
                                 contentDescription = null,
-                                tint = NeonCyan,
+                                tint = NeonPurpleBright,
                                 modifier = Modifier.size(22.dp)
                             )
                             Text(
@@ -319,7 +312,7 @@ fun ReportsScreen(
                             onClick = {
                                 val reportText = buildProTelemetryReportSummary(stats, visibleSessions, stabilityPct)
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                clipboard?.setPrimaryClip(ClipData.newPlainText("GAMEBOOST Telemetry Report", reportText))
+                                clipboard?.setPrimaryClip(ClipData.newPlainText("ZeroX Boost Telemetry Report", reportText))
                                 exportedFeedback = "Copied ${visibleSessions.size}-session telemetry summary to clipboard."
                             },
                             modifier = Modifier
@@ -354,7 +347,7 @@ fun ReportsScreen(
                         ) {
                             Icon(Icons.Default.Stars, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Explore GAMEBOOST Pro", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            Text("Explore ZeroX Boost Pro", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                         }
                     }
                 }
@@ -679,7 +672,7 @@ internal fun buildProTelemetryReportSummary(
     stabilityPct: Int
 ): String {
     val sb = StringBuilder()
-    sb.appendLine("GAMEBOOST PRO — Telemetry & Stability Report")
+    sb.appendLine("ZeroX BOOST PRO — Telemetry & Stability Report")
     sb.appendLine("Device: ${stats.deviceModel} | SoC: ${stats.cpuModel} | Android ${stats.androidVersion} (API ${stats.sdkInt})")
     sb.appendLine("Sessions Analyzed: ${sessions.size} | Thermal Stability Rate: $stabilityPct%")
     sb.appendLine("---")

@@ -448,14 +448,14 @@ fun GamingSidebarContent(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.SportsEsports,
-                                            contentDescription = "GAMEBOOST",
+                                            contentDescription = "ZeroX BOOST",
                                             tint = accentColor,
                                             modifier = Modifier.size(16.dp)
                                         )
                                     }
                                     Column {
                                         Text(
-                                            text = "GAMEBOOST",
+                                            text = "ZeroX BOOST",
                                             fontFamily = SpaceGroteskFontFamily,
                                             color = accentColor,
                                             fontWeight = FontWeight.ExtraBold,

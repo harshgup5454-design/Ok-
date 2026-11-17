@@ -52,7 +52,7 @@ fun isRunningUnderRobolectric(): Boolean {
 }
 
 /**
- * Branded GAMEBOOST launch transition overlay.
+ * Branded ZeroX Boost launch transition overlay.
  * Displays cleanly on real Android devices for ~650ms (with tap-to-skip) while bypassing
  * automatically under Robolectric so UI test harnesses never stall waiting for animation timers.
  */
@@ -64,7 +64,7 @@ fun SplashTransitionOverlay(
     val infiniteTransition = rememberInfiniteTransition(label = "splash_ring")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 0.94f,
-        targetValue = 1.08f,
+        targetValue = 1.10f,
         animationSpec = infiniteRepeatable(
             animation = tween(900, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -99,19 +99,19 @@ fun SplashTransitionOverlay(
                     .align(Alignment.Center)
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(22.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Box(
                         modifier = Modifier
-                            .size(124.dp)
+                            .size(152.dp)
                             .scale(pulseScale)
                             .clip(CircleShape)
                             .background(
                                 Brush.radialGradient(
                                     listOf(
-                                        GamingBlue.copy(alpha = 0.35f),
-                                        NeonCyan.copy(alpha = 0.10f),
+                                        NeonPurpleBright.copy(alpha = 0.45f),
+                                        NeonPurple.copy(alpha = 0.18f),
                                         Color.Transparent
                                     )
                                 )
@@ -119,12 +119,18 @@ fun SplashTransitionOverlay(
                     )
                     Image(
                         painter = painterResource(id = R.drawable.gameboost_logo),
-                        contentDescription = "GAMEBOOST Emblem",
-                        contentScale = ContentScale.Crop,
+                        contentDescription = "ZeroX Boost Emblem",
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .size(92.dp)
+                            .size(116.dp)
                             .clip(CircleShape)
-                            .border(2.dp, Brush.linearGradient(listOf(NeonCyan, GamingBlue, NeonPurple)), CircleShape)
+                            .background(Color.Black)
+                            .border(
+                                2.dp,
+                                Brush.linearGradient(listOf(NeonPurpleBright, NeonPurple, NeonCyan)),
+                                CircleShape
+                            )
+                            .padding(10.dp)
                     )
                 }
 
@@ -133,15 +139,15 @@ fun SplashTransitionOverlay(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "GAMEBOOST",
+                        text = "ZeroX BOOST",
                         style = MaterialTheme.typography.displaySmall,
                         color = TextPrimary,
-                        letterSpacing = 2.4.sp
+                        letterSpacing = 2.2.sp
                     )
                     Text(
-                        text = "HARDWARE TELEMETRY & GAMING COMPANION",
+                        text = "HARDWARE TELEMETRY & GAMING ENGINE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = NeonCyan,
+                        color = NeonPurpleBright,
                         letterSpacing = 1.6.sp,
                         textAlign = TextAlign.Center
                     )
@@ -149,10 +155,10 @@ fun SplashTransitionOverlay(
 
                 LinearProgressIndicator(
                     modifier = Modifier
-                        .width(160.dp)
+                        .width(176.dp)
                         .height(3.dp)
                         .clip(RoundedCornerShape(2.dp)),
-                    color = NeonCyan,
+                    color = NeonPurpleBright,
                     trackColor = DarkSurfaceVariant
                 )
             }
@@ -189,7 +195,7 @@ fun AboutGameBoostScreen(
         ) {
             item {
                 GameBoostScreenHeader(
-                    title = "About GAMEBOOST",
+                    title = "About ZeroX Boost",
                     subtitle = "Engineering integrity, architecture & device transparency",
                     onBackClick = onBackClick,
                     backButtonTestTag = "about_back_button"
@@ -204,12 +210,18 @@ fun AboutGameBoostScreen(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.gameboost_logo),
-                            contentDescription = "GAMEBOOST Logo",
-                            contentScale = ContentScale.Crop,
+                            contentDescription = "ZeroX Boost Logo",
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
-                                .size(60.dp)
+                                .size(64.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .border(1.5.dp, NeonCyan.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                .background(Color.Black)
+                                .border(
+                                    1.5.dp,
+                                    Brush.linearGradient(listOf(NeonPurpleBright, NeonPurple, NeonCyan)),
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .padding(5.dp)
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Row(
@@ -217,11 +229,11 @@ fun AboutGameBoostScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "GAMEBOOST 3.0",
+                                    text = "ZeroX BOOST",
                                     style = MaterialTheme.typography.titleLarge,
                                     color = TextPrimary
                                 )
-                                StatusPillBadge(text = "v${BuildConfig.VERSION_NAME}", color = NeonCyan, showDot = false)
+                                StatusPillBadge(text = "v${BuildConfig.VERSION_NAME}", color = NeonPurpleBright, showDot = false)
                             }
                             Text(
                                 text = "Build ${BuildConfig.VERSION_CODE} • Target API 35 (Android 15 Ready)",
@@ -248,7 +260,7 @@ fun AboutGameBoostScreen(
                         icon = Icons.Default.VerifiedUser,
                         tint = NeonGreen,
                         title = "Zero Fake Telemetry Guarantee",
-                        body = "GAMEBOOST never fabricates FPS counters, game-server ping, GPU clock boosts, or memory freed percentages. When Android isolates a metric, we explicitly mark it Unavailable or show the official PowerManager / system value."
+                        body = "ZeroX Boost never fabricates FPS counters, game-server ping, GPU clock boosts, or memory freed percentages. When Android isolates a metric, we explicitly mark it Unavailable or show the official PowerManager / system value."
                     )
                     HorizontalDivider(color = DarkSurfaceBorder)
                     AboutPrincipleItem(
@@ -260,7 +272,7 @@ fun AboutGameBoostScreen(
                     HorizontalDivider(color = DarkSurfaceBorder)
                     AboutPrincipleItem(
                         icon = Icons.Default.Restore,
-                        tint = NeonPurple,
+                        tint = NeonPurpleBright,
                         title = "Reversible System Profiles",
                         body = "Whenever Autopilot or Device Control adjusts brightness, screen timeout, auto-rotate, or Do Not Disturb, your baseline values are stored locally in Room so they restore cleanly on exit."
                     )
@@ -292,8 +304,8 @@ fun AboutGameBoostScreen(
                             .weight(1f)
                             .heightIn(min = 48.dp),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonPurple),
-                        border = BorderStroke(1.dp, NeonPurple.copy(alpha = 0.5f))
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonPurpleBright),
+                        border = BorderStroke(1.dp, NeonPurpleBright.copy(alpha = 0.5f))
                     ) {
                         Icon(Icons.Default.Shield, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
@@ -352,14 +364,14 @@ fun HelpFaqScreen(
             FaqEntry(
                 id = "fps",
                 category = "Telemetry",
-                question = "Why does GAMEBOOST show FPS as Unavailable unless I log it?",
-                answer = "On standard unrooted Android devices, the OS sandbox isolates each app's graphics surface buffer. Third-party apps cannot read another game's live render FPS without root, ADB, or OEM-privileged APIs. GAMEBOOST provides the Display Refresh Rate (Hz), PowerManager thermal status, and lets you log observed FPS from OEM overlays (like Xiaomi Game Turbo or Samsung Game Plugins)."
+                question = "Why does ZeroX Boost show FPS as Unavailable unless I log it?",
+                answer = "On standard unrooted Android devices, the OS sandbox isolates each app's graphics surface buffer. Third-party apps cannot read another game's live render FPS without root, ADB, or OEM-privileged APIs. ZeroX Boost provides the Display Refresh Rate (Hz), PowerManager thermal status, and lets you log observed FPS from OEM overlays (like Xiaomi Game Turbo or Samsung Game Plugins)."
             ),
             FaqEntry(
                 id = "overlay",
                 category = "Overlay",
                 question = "Floating sidebar doesn't appear on Xiaomi / HyperOS / MIUI",
-                answer = "On Xiaomi, Redmi, and POCO devices, grant 'Display over other apps' in Permission Center AND enable 'Display pop-up windows while running in the background' inside Android Settings -> Apps -> Boost Game -> Other permissions. Also disable battery optimization restrictions if the OS kills background services."
+                answer = "On Xiaomi, Redmi, and POCO devices, grant 'Display over other apps' in Permission Center AND enable 'Display pop-up windows while running in the background' inside Android Settings -> Apps -> ZeroX Boost -> Other permissions. Also disable battery optimization restrictions if the OS kills background services."
             ),
             FaqEntry(
                 id = "ping",
@@ -376,8 +388,8 @@ fun HelpFaqScreen(
             FaqEntry(
                 id = "pro",
                 category = "Billing",
-                question = "Do I need GAMEBOOST Pro to use diagnostics or the sidebar?",
-                answer = "No. Core hardware telemetry, Game Space, Network Intelligence, Benchmark Lab, Aim Lab, Autopilot 3.0, and the Cyan Floating Sidebar are 100% free. Optional GAMEBOOST Pro removes idle ads, unlocks Purple/Green/OLED sidebar accents, adds Pro profile presets, and expands report history/export."
+                question = "Do I need ZeroX Boost Pro to use diagnostics or the sidebar?",
+                answer = "No. Core hardware telemetry, Game Space, Network Intelligence, Benchmark Lab, Aim Lab, Autopilot 3.0, and the Floating Sidebar are 100% free. Optional ZeroX Boost Pro removes idle ads, unlocks Purple/Green/OLED sidebar accents, adds Pro profile presets, and expands report history/export."
             )
         )
     }
@@ -416,7 +428,7 @@ fun HelpFaqScreen(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     placeholder = { Text("Search questions or topics...", color = TextMuted, fontSize = 13.sp) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = NeonCyan) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = NeonPurpleBright) },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { searchQuery = "" }) {
@@ -427,7 +439,7 @@ fun HelpFaqScreen(
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = NeonCyan,
+                        focusedBorderColor = NeonPurpleBright,
                         unfocusedBorderColor = DarkSurfaceBorder,
                         focusedContainerColor = DarkSurface,
                         unfocusedContainerColor = DarkSurface,
@@ -452,7 +464,7 @@ fun HelpFaqScreen(
                 items(filteredFaqs, key = { it.id }) { faq ->
                     val isExpanded = expandedId == faq.id
                     GameBoostSurfaceCard(
-                        borderColor = if (isExpanded) NeonCyan.copy(alpha = 0.5f) else DarkSurfaceBorder,
+                        borderColor = if (isExpanded) NeonPurpleBright.copy(alpha = 0.55f) else DarkSurfaceBorder,
                         modifier = Modifier.clickable {
                             expandedId = if (isExpanded) null else faq.id
                         }
@@ -476,7 +488,7 @@ fun HelpFaqScreen(
                             Icon(
                                 imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                                 contentDescription = if (isExpanded) "Collapse" else "Expand",
-                                tint = NeonCyan
+                                tint = NeonPurpleBright
                             )
                         }
                         AnimatedVisibility(visible = isExpanded) {
@@ -506,11 +518,11 @@ fun HelpFaqScreen(
                         }
                         Button(
                             onClick = onOpenPermissionCenter,
-                            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan),
+                            colors = ButtonDefaults.buttonColors(containerColor = NeonPurpleBright),
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.heightIn(min = 48.dp)
                         ) {
-                            Text("Open", color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text("Open", color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

@@ -81,7 +81,7 @@ fun PremiumScreen(
                             }
                             Column {
                                 Text(
-                                    text = "GAMEBOOST PRO",
+                                    text = "ZeroX BOOST PRO",
                                     style = MaterialTheme.typography.titleLarge,
                                     color = TextPrimary,
                                     letterSpacing = 1.2.sp
@@ -215,7 +215,7 @@ fun PremiumScreen(
                 val catalog = billingState.catalog
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     PlanOfferCard(
-                        planName = "GAMEBOOST Pro Monthly",
+                        planName = "ZeroX Boost Pro Monthly",
                         productId = catalog.monthlySubscriptionId,
                         offer = billingState.monthlyOffer,
                         subtitle = "Flexible monthly Google Play subscription • Cancel anytime",
@@ -230,7 +230,7 @@ fun PremiumScreen(
                     )
 
                     PlanOfferCard(
-                        planName = "GAMEBOOST Pro Yearly",
+                        planName = "ZeroX Boost Pro Yearly",
                         productId = catalog.yearlySubscriptionId,
                         offer = billingState.yearlyOffer,
                         subtitle = "Annual Google Play subscription",
@@ -246,7 +246,7 @@ fun PremiumScreen(
 
                     billingState.oneTimeOffers.forEach { oneTimeOffer ->
                         PlanOfferCard(
-                            planName = oneTimeOffer.title.ifBlank { "GAMEBOOST Pro Pass" },
+                            planName = oneTimeOffer.title.ifBlank { "ZeroX Boost Pro Pass" },
                             productId = oneTimeOffer.productId,
                             offer = oneTimeOffer,
                             subtitle = "One-time Google Play product • No recurring charges",

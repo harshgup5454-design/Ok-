@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Boost Game Apk"
+rootProject.name = "ZeroX Boost"
 
 include(":app")

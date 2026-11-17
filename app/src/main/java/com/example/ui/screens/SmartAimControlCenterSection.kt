@@ -231,7 +231,7 @@ fun SmartAimControlCenterSection(
                         )
                     }
                     Text(
-                        text = "To apply ${controlState.activeMode.displayName} inside ${controlState.selectedGame}, open the in-game Settings > Sensitivity and manually match the calculated values. GAMEBOOST never modifies third-party game code or memory.",
+                        text = "To apply ${controlState.activeMode.displayName} inside ${controlState.selectedGame}, open the in-game Settings > Sensitivity and manually match the calculated values. ZeroX Boost never modifies third-party game code or memory.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )

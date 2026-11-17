@@ -112,43 +112,31 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Settings & Sidebar",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = TextPrimary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Appearance, overlay HUD, permissions, privacy & info",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextSecondary
-                        )
+                GameBoostScreenHeader(
+                    title = "Settings & Sidebar",
+                    subtitle = "Appearance, overlay HUD, permissions & privacy",
+                    icon = Icons.Default.Settings,
+                    iconTint = NeonPurpleBright,
+                    trailingContent = {
+                        OutlinedButton(
+                            onClick = onNavigateToPremium,
+                            modifier = Modifier
+                                .heightIn(min = 48.dp)
+                                .testTag("settings_pro_button"),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, NeonPurple.copy(alpha = 0.6f)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonPurpleBright)
+                        ) {
+                            Icon(Icons.Default.Stars, contentDescription = "ZeroX Boost Pro", modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (entitlement.isPremium) "PRO Active" else "Upgrade Pro",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-
-                    OutlinedButton(
-                        onClick = onNavigateToPremium,
-                        modifier = Modifier
-                            .heightIn(min = 48.dp)
-                            .testTag("settings_pro_button"),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, NeonPurple.copy(alpha = 0.6f)),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonPurpleBright)
-                    ) {
-                        Icon(Icons.Default.Stars, contentDescription = "GAMEBOOST Pro", modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (entitlement.isPremium) "PRO Active" else "Upgrade Pro",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+                )
             }
 
             // Permission Center Card
@@ -421,7 +409,7 @@ fun SettingsScreen(
                                             themeGateFeedback = null
                                             onUpdateOverlayConfig { it.copy(accentTheme = accent) }
                                         } else {
-                                            themeGateFeedback = "$accent overlay theme requires GAMEBOOST Pro. Cyan remains free."
+                                            themeGateFeedback = "$accent overlay theme requires ZeroX Boost Pro. Cyan remains free."
                                         }
                                     },
                                     label = {
@@ -535,7 +523,7 @@ fun SettingsScreen(
                         }
                     }
                     Text(
-                        text = "Privacy Notice: GAMEBOOST never uploads or shares app usage history. Launching games directly from Gaming Space works with zero extra permissions.",
+                        text = "Privacy Notice: ZeroX Boost never uploads or shares app usage history. Launching games directly from Gaming Space works with zero extra permissions.",
                         style = MaterialTheme.typography.labelSmall,
                         color = TextMuted
                     )
@@ -918,7 +906,7 @@ fun SettingsScreen(
                         ) {
                             Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("About GAMEBOOST", fontSize = 11.5.sp, fontWeight = FontWeight.Bold)
+                            Text("About ZeroX Boost", fontSize = 11.5.sp, fontWeight = FontWeight.Bold)
                         }
                         OutlinedButton(
                             onClick = onOpenHelpFaq,
@@ -966,7 +954,7 @@ fun SettingsScreen(
             shape = RoundedCornerShape(20.dp),
             title = {
                 Text(
-                    text = "GAMEBOOST Privacy Policy",
+                    text = "ZeroX Boost Privacy Policy",
                     color = TextPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp

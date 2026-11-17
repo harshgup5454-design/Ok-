@@ -115,7 +115,7 @@ fun GamingSpaceScreen(
                     title = "GAMING SPACE",
                     subtitle = "Game Vault, Profiles & Telemetry Launch Hub",
                     icon = Icons.Default.SportsEsports,
-                    iconTint = NeonCyan,
+                    iconTint = NeonPurpleBright,
                     trailingContent = {
                         Surface(
                             shape = RoundedCornerShape(12.dp),
@@ -131,7 +131,7 @@ fun GamingSpaceScreen(
                                 Icon(
                                     imageVector = Icons.Default.MenuOpen,
                                     contentDescription = "Sidebar Preview",
-                                    tint = NeonCyan,
+                                    tint = NeonPurpleBright,
                                     modifier = Modifier.size(22.dp)
                                 )
                             }
@@ -143,7 +143,7 @@ fun GamingSpaceScreen(
             // Real-Time Hardware Status Hero Strip
             item {
                 GameBoostHeroCard(
-                    accentStart = GamingBlue,
+                    accentStart = NeonPurple,
                     accentEnd = NeonCyan,
                     contentPadding = PaddingValues(14.dp)
                 ) {
@@ -159,7 +159,7 @@ fun GamingSpaceScreen(
                             Icon(
                                 imageVector = Icons.Default.Memory,
                                 contentDescription = null,
-                                tint = NeonCyan,
+                                tint = NeonPurpleBright,
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
@@ -256,40 +256,16 @@ fun GamingSpaceScreen(
 
             // Segmented Tabs
             item {
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = DarkSurface,
-                    border = BorderStroke(1.dp, DarkSurfaceBorder)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        SpaceTabPill(
-                            label = "My Vault (${vaultGames.size})",
-                            selected = selectedTab == 0,
-                            accent = NeonCyan,
-                            onClick = { selectedTab = 0 },
-                            modifier = Modifier.weight(1f)
-                        )
-                        SpaceTabPill(
-                            label = "Guides",
-                            selected = selectedTab == 1,
-                            accent = NeonGreen,
-                            onClick = { selectedTab = 1 },
-                            modifier = Modifier.weight(0.85f)
-                        )
-                        SpaceTabPill(
-                            label = "Sessions (${benchmarkSessions.size})",
-                            selected = selectedTab == 2,
-                            accent = NeonPurple,
-                            onClick = { selectedTab = 2 },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
+                ZeroXSegmentedControl(
+                    options = listOf(
+                        0 to "My Vault (${vaultGames.size})",
+                        1 to "Guides",
+                        2 to "Sessions (${benchmarkSessions.size})"
+                    ),
+                    selected = selectedTab,
+                    onSelect = { selectedTab = it },
+                    accentColor = NeonPurpleBright
+                )
             }
 
             // Tab Content
@@ -436,8 +412,8 @@ fun GamingSpaceScreen(
                             GameBoostEmptyState(
                                 icon = Icons.Default.SportsEsports,
                                 title = "No games in your vault yet",
-                                description = "Add games installed on your device to launch them with a dedicated profile, FPS lock target, and GAMEBOOST overlay HUD.",
-                                accentColor = NeonCyan,
+                                description = "Add games installed on your device to launch them with a dedicated profile, FPS lock target, and ZeroX Boost overlay HUD.",
+                                accentColor = NeonPurpleBright,
                                 actionLabel = "Browse Installed Apps",
                                 onActionClick = {
                                     onRefreshApps()
@@ -508,7 +484,7 @@ fun GamingSpaceScreen(
                                 )
                             }
                             Text(
-                                text = "GAMEBOOST does not inject into game memory, modify APK/OBB assets, or claim impossible GPU boosting. These settings represent realistic graphics configurations to apply inside game menus to sustain target frame rates without thermal throttling.",
+                                text = "ZeroX Boost does not inject into game memory, modify APK/OBB assets, or claim impossible GPU boosting. These settings represent realistic graphics configurations to apply inside game menus to sustain target frame rates without thermal throttling.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -617,38 +593,6 @@ fun GamingSpaceScreen(
     }
 }
 
-@Composable
-private fun SpaceTabPill(
-    label: String,
-    selected: Boolean,
-    accent: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .heightIn(min = 42.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(10.dp),
-        color = if (selected) accent.copy(alpha = 0.16f) else Color.Transparent,
-        border = if (selected) BorderStroke(1.dp, accent.copy(alpha = 0.45f)) else null
-    ) {
-        Box(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = if (selected) accent else TextSecondary,
-                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
 
 @Composable
 fun HardwareChip(
@@ -1277,7 +1221,7 @@ fun FullGameProfileDialog(
                                             selectedFps = presetFps
                                             notes = "[Pro Preset: $label] Target ${presetFps}fps, ${presetMode.displayName}"
                                         } else {
-                                            proPresetHint = "Pro presets unlock with GAMEBOOST Pro. Manual tuning below stays free."
+                                            proPresetHint = "Pro presets unlock with ZeroX Boost Pro. Manual tuning below stays free."
                                         }
                                     },
                                     label = { Text(if (entitlement.allowProProfileCustomization) label else "$label ★", fontSize = 10.sp) },

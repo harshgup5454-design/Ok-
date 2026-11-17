@@ -86,7 +86,7 @@ class MainNavigationAndSettingsResumeTest {
         // Return to Home via bottom tab
         composeActivityRule.onNodeWithTag("nav_tab_dashboard").performClick()
         composeActivityRule.waitForIdle()
-        composeActivityRule.onNodeWithText("GAMEBOOST 3.0").assertIsDisplayed()
+        composeActivityRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
     }
 
     @Test

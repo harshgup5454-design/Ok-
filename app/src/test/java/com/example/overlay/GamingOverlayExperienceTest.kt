@@ -282,7 +282,7 @@ class GamingOverlayExperienceTest {
         composeRule.onNodeWithTag("overlay_sidebar_panel").assertIsDisplayed()
 
         // Core telemetry, profile switcher, tools, timer, and zero ads check
-        composeRule.onNodeWithText("GAMEBOOST").assertIsDisplayed()
+        composeRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
         composeRule.onNodeWithText("02:05").assertIsDisplayed()
         composeRule.onNodeWithText("64%").assertIsDisplayed()
         composeRule.onNodeWithText("36.2°C").assertIsDisplayed()
@@ -367,7 +367,7 @@ class GamingOverlayExperienceTest {
         }
 
         composeRule.waitForIdle()
-        composeRule.onNodeWithText("GAMEBOOST 3.0").assertIsDisplayed()
+        composeRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
         composeRule.onNodeWithTag("dashboard_protection_card").assertIsDisplayed()
         composeRule.onNodeWithText("RAM Usage").assertIsDisplayed()
         composeRule.onNodeWithText("Battery & Temp").assertIsDisplayed()
@@ -442,7 +442,7 @@ class GamingOverlayExperienceTest {
         composeRule.onNodeWithTag("overlay_center_passthrough").assertIsDisplayed()
 
         // Left & right wing telemetry and controls
-        composeRule.onNodeWithText("GAMEBOOST").assertIsDisplayed()
+        composeRule.onNodeWithText("ZeroX BOOST").assertIsDisplayed()
         composeRule.onNodeWithText("120 Hz").assertIsDisplayed()
         composeRule.onNodeWithText("64%").assertIsDisplayed()
         composeRule.onNodeWithText("36.2°C").assertIsDisplayed()

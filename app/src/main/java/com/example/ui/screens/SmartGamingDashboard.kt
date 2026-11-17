@@ -103,7 +103,7 @@ fun SmartGamingDashboard(
                         Text(
                             text = "GAMING AUTOPILOT 3.0",
                             style = MaterialTheme.typography.titleMedium,
-                            color = NeonCyan,
+                            color = NeonPurpleBright,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.1.sp
                         )
@@ -137,7 +137,7 @@ fun SmartGamingDashboard(
             // Autopilot Master Switch Hero Card
             item {
                 GameBoostHeroCard(
-                    accentStart = GamingBlue,
+                    accentStart = NeonPurple,
                     accentEnd = NeonCyan,
                     contentPadding = PaddingValues(16.dp)
                 ) {
@@ -157,7 +157,7 @@ fun SmartGamingDashboard(
                                     .clip(CircleShape)
                                     .background(
                                         if (autopilotState.isAutopilotEnabled)
-                                            Brush.linearGradient(listOf(GamingBlue, NeonCyan))
+                                            Brush.linearGradient(listOf(NeonPurple, NeonCyan))
                                         else
                                             Brush.linearGradient(listOf(DarkSurfaceBorder, DarkSurfaceVariant))
                                     ),
@@ -166,7 +166,7 @@ fun SmartGamingDashboard(
                                 Icon(
                                     imageVector = Icons.Default.AutoMode,
                                     contentDescription = null,
-                                    tint = if (autopilotState.isAutopilotEnabled) Color.Black else TextSecondary,
+                                    tint = if (autopilotState.isAutopilotEnabled) Color.White else TextSecondary,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -174,7 +174,7 @@ fun SmartGamingDashboard(
                                 Text(
                                     text = "AUTOPILOT MASTER",
                                     style = MaterialTheme.typography.titleSmall,
-                                    color = if (autopilotState.isAutopilotEnabled) NeonCyan else TextPrimary,
+                                    color = if (autopilotState.isAutopilotEnabled) NeonPurpleBright else TextPrimary,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(

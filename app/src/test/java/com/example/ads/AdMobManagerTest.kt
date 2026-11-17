@@ -354,7 +354,7 @@ class AdMobManagerTest {
             .performScrollToNode(hasTestTag("settings_privacy_policy_button"))
         composeTestRule.onNodeWithTag("settings_privacy_policy_button").performClick()
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("GAMEBOOST Privacy Policy").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ZeroX Boost Privacy Policy").assertIsDisplayed()
         composeTestRule.onNodeWithText("Close").performClick()
     }
 

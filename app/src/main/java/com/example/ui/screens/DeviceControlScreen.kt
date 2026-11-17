@@ -135,7 +135,7 @@ fun DeviceControlScreen(
                     )
 
                     Text(
-                        text = "Profiles control ONLY settings GAMEBOOST is authorized to change. Baseline system values are saved prior to changes.",
+                        text = "Profiles control ONLY settings ZeroX Boost is authorized to change. Baseline system values are saved prior to changes.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -251,7 +251,7 @@ fun DeviceControlScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
-                        text = "GAMEBOOST will apply authorized system adjustments. Your original system baseline will be saved so you can revert anytime.",
+                        text = "ZeroX Boost will apply authorized system adjustments. Your original system baseline will be saved so you can revert anytime.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -309,7 +309,7 @@ fun DeviceCapabilitiesHeaderCard(
     onLaunchOem: () -> Unit
 ) {
     GameBoostHeroCard(
-        accentStart = GamingBlue,
+        accentStart = NeonPurple,
         accentEnd = NeonCyan,
         contentPadding = PaddingValues(16.dp)
     ) {
@@ -812,7 +812,7 @@ fun DeveloperOptionsAssistantCard(
         }
 
         Text(
-            text = "Technical guidance for user-configurable Developer Options. GAMEBOOST never changes protected developer flags automatically.",
+            text = "Technical guidance for user-configurable Developer Options. ZeroX Boost never changes protected developer flags automatically.",
             style = MaterialTheme.typography.bodySmall,
             color = TextSecondary
         )
