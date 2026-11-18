@@ -32,30 +32,37 @@ jobs:
       - name: Run Unit Tests
         run: gradle :app:testDebugUnitTest --no-daemon
 
-      - name: Decode Release Keystore (if configured)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+      - name: Verify Release Signing Secrets
+        env:
+          HAS_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 != '' }}
+          HAS_STORE_PASS: ${{ secrets.STORE_PASSWORD != '' }}
+          HAS_KEY_PASS: ${{ secrets.KEY_PASSWORD != '' }}
+        run: |
+          if [ "$HAS_KEYSTORE" != "true" ] || [ "$HAS_STORE_PASS" != "true" ] || [ "$HAS_KEY_PASS" != "true" ]; then
+            echo "::error::Missing GitHub Release secrets. Add KEYSTORE_BASE64, STORE_PASSWORD, and KEY_PASSWORD in Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Decode Release Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > my-upload-key.jks
 
       - name: Build Signed Release APK
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_PATH: ${{ github.workspace }}/my-upload-key.jks
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          gradle :app:assembleRelease --no-daemon
+          gradle :app:lintVitalRelease :app:assembleRelease --no-daemon
           cp app/build/outputs/apk/release/app-release.apk ZeroX-Boost-Release.apk
 
       - name: Upload Release APK workflow artifact
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: ZeroX-Boost-Release
           path: ZeroX-Boost-Release.apk
 
       - name: Publish Release APK to GitHub Releases
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

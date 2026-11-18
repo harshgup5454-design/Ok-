@@ -11,7 +11,7 @@
   - `app/build/outputs/apk/release/app-release.apk`
   - `apk/ZeroX-Boost-Release.apk`
 - **Release Signing Key:** Signed with RSA 2048-bit PKCS12 release keystore (`my-upload-key.jks`, alias `upload`, gitignored; no passwords committed in source code)
-  - **Certificate SHA-256:** `e42e4e76e9e91d416d0a4ac99bda9b7fc95dfb9a8bdd04950bc0331a23f94c22`
+  - **Certificate SHA-256:** `c3e1bc7879e78866dce1e06a047637a93dd319e6bb47cb27fa01c8398eb63bbe`
 
 ---
 
