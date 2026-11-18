@@ -2,8 +2,6 @@ package com.example.ads
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
-import android.provider.Settings
 import com.example.BuildConfig
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -15,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -61,10 +58,10 @@ object ConsentManager {
                 .setTagForUnderAgeOfConsent(false)
 
             if (BuildConfig.DEBUG && AdMobConfig.IS_TEST_MODE) {
-                val debugSettingsBuilder = com.google.android.ump.ConsentDebugSettings.Builder(activity)
+                val debugSettings = com.google.android.ump.ConsentDebugSettings.Builder(activity)
                     .addTestDeviceHashedId(com.google.android.gms.ads.AdRequest.DEVICE_ID_EMULATOR)
-                computeDebugEmulatorTestId(appContext)?.let { debugSettingsBuilder.addTestDeviceHashedId(it) }
-                paramsBuilder.setConsentDebugSettings(debugSettingsBuilder.build())
+                    .build()
+                paramsBuilder.setConsentDebugSettings(debugSettings)
             }
 
             val params = paramsBuilder.build()
@@ -158,12 +155,8 @@ object ConsentManager {
         initScope.launch {
             try {
                 if (BuildConfig.DEBUG && AdMobConfig.IS_TEST_MODE) {
-                    val testIds = buildList {
-                        add(com.google.android.gms.ads.AdRequest.DEVICE_ID_EMULATOR)
-                        computeDebugEmulatorTestId(appContext)?.let { add(it) }
-                    }
                     val requestConfig = RequestConfiguration.Builder()
-                        .setTestDeviceIds(testIds)
+                        .setTestDeviceIds(listOf(com.google.android.gms.ads.AdRequest.DEVICE_ID_EMULATOR))
                         .build()
                     MobileAds.setRequestConfiguration(requestConfig)
                 }
@@ -220,37 +213,6 @@ object ConsentManager {
 
     fun resetInitFlagForTesting() {
         resetInitFlag()
-    }
-
-    private fun computeDebugEmulatorTestId(context: Context): String? {
-        if (!BuildConfig.DEBUG || !isRunningOnEmulator()) return null
-        return try {
-            val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-            if (androidId.isNullOrBlank()) return null
-            MessageDigest.getInstance("MD5")
-                .digest(androidId.toByteArray())
-                .joinToString("") { "%02X".format(it) }
-        } catch (_: Throwable) {
-            null
-        }
-    }
-
-    private fun isRunningOnEmulator(): Boolean {
-        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
-            Build.FINGERPRINT.startsWith("generic") ||
-            Build.FINGERPRINT.startsWith("unknown") ||
-            Build.HARDWARE.contains("goldfish") ||
-            Build.HARDWARE.contains("ranchu") ||
-            Build.HARDWARE.contains("cutf") ||
-            Build.MODEL.contains("google_sdk") ||
-            Build.MODEL.contains("Emulator") ||
-            Build.MODEL.contains("Android SDK built for") ||
-            Build.MANUFACTURER.contains("Genymotion") ||
-            Build.PRODUCT.contains("sdk") ||
-            Build.PRODUCT.contains("vbox86p") ||
-            Build.PRODUCT.contains("emulator") ||
-            Build.PRODUCT.contains("simulator") ||
-            Build.PRODUCT.contains("cuttlefish")
     }
 
     fun retryConsentAndSdkFlow(

@@ -41,7 +41,7 @@ class PermissionFlowTest {
             ShadowSettings.setCanDrawOverlays(false)
             val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
             shadowOf(appOps).setMode(
-                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.app.AppOpsManager.OPSTR_WRITE_SETTINGS,
                 android.os.Process.myUid(),
                 ctx.packageName,
                 android.app.AppOpsManager.MODE_IGNORED
@@ -62,6 +62,13 @@ class PermissionFlowTest {
         OnboardingPreferences.setCompleted(ctx, false)
         PermissionManager.clearNotificationRequestTracking(ctx)
         ShadowSettings.setCanDrawOverlays(false)
+        val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+        shadowOf(appOps).setMode(
+            android.app.AppOpsManager.OPSTR_WRITE_SETTINGS,
+            android.os.Process.myUid(),
+            ctx.packageName,
+            android.app.AppOpsManager.MODE_DEFAULT
+        )
     }
 
     @Test
@@ -110,13 +117,13 @@ class PermissionFlowTest {
         )
         assertEquals(
             PermissionStatus.NOT_GRANTED,
-            audit.items.first { it.type == AppPermissionType.USAGE_ACCESS }.status
+            audit.items.first { it.type == AppPermissionType.WRITE_SETTINGS }.status
         )
 
-        // Explain rationale dialog appears before opening Android Settings for Usage Access (not granted)
+        // Explain rationale dialog appears before opening Android Settings for Modify System Settings (not granted)
         composeActivityRule.onNodeWithTag("permission_setup_list")
-            .performScrollToNode(hasTestTag("permission_action_usage_access"))
-        composeActivityRule.onNodeWithTag("permission_action_usage_access").performClick()
+            .performScrollToNode(hasTestTag("permission_action_write_settings"))
+        composeActivityRule.onNodeWithTag("permission_action_write_settings").performClick()
         composeActivityRule.waitForIdle()
         composeActivityRule.onNodeWithTag("permission_rationale_dialog").assertIsDisplayed()
         composeActivityRule.onNodeWithTag("permission_rationale_cancel").performClick()

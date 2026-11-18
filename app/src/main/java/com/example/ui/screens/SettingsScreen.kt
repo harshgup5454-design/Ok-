@@ -72,7 +72,6 @@ fun SettingsScreen(
 
     var canDrawOverlay by remember { mutableStateOf(readOverlayPerm()) }
     var hasNotificationPerm by remember { mutableStateOf(readNotificationPerm()) }
-    var hasUsageAccess by remember { mutableStateOf(GameSpaceManager.hasUsageStatsPermission(context)) }
     var permissionAudit by remember { mutableStateOf(PermissionManager.auditPermissions(context, activity)) }
 
     val notificationLauncher = rememberLauncherForActivityResult(
@@ -92,7 +91,6 @@ fun SettingsScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 canDrawOverlay = readOverlayPerm()
                 hasNotificationPerm = readNotificationPerm()
-                hasUsageAccess = GameSpaceManager.hasUsageStatsPermission(context)
                 permissionAudit = PermissionManager.auditPermissions(context, activity)
                 if (canDrawOverlay) {
                     overlayActionFeedback = null
@@ -486,47 +484,24 @@ fun SettingsScreen(
                 }
             }
 
-            // Optional Foreground Game Detection (Usage Access)
+            // Zero Usage Tracking Launch Mode Notice
             item {
                 GameBoostSurfaceCard {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = NeonGreen, modifier = Modifier.size(20.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Optional Foreground Game Detection", style = MaterialTheme.typography.titleSmall, color = TextPrimary)
+                            Text("Privacy-First Session Launching", style = MaterialTheme.typography.titleSmall, color = TextPrimary)
                             Text(
-                                text = if (hasUsageAccess) "Usage Access Granted (Opt-in)" else "Requires Usage Access permission in Android Settings",
-                                color = if (hasUsageAccess) NeonGreen else TextSecondary,
+                                text = "Sessions start cleanly from Gaming Space or Command Center with zero cross-app usage tracking.",
+                                color = TextSecondary,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        if (!hasUsageAccess) {
-                            TextButton(
-                                onClick = {
-                                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    try { context.startActivity(intent) } catch (_: Exception) {}
-                                },
-                                modifier = Modifier.heightIn(min = 48.dp)
-                            ) {
-                                Text("Authorize", color = NeonCyan, fontWeight = FontWeight.Bold)
-                            }
-                        } else {
-                            Switch(
-                                checked = overlayConfig.autoDetectForegroundGame,
-                                onCheckedChange = { enabled ->
-                                    onUpdateOverlayConfig { it.copy(autoDetectForegroundGame = enabled) }
-                                },
-                                colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = NeonCyan)
-                            )
-                        }
                     }
-                    Text(
-                        text = "Privacy Notice: ZeroX Boost never uploads or shares app usage history. Launching games directly from Gaming Space works with zero extra permissions.",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TextMuted
-                    )
                 }
             }
 
@@ -963,7 +938,7 @@ fun SettingsScreen(
             text = {
                 Text(
                     text = "• Local Telemetry Only: CPU, RAM, battery, thermal status, and saved game profiles remain stored locally in Room on your device.\n" +
-                        "• Optional Usage Access: Foreground app checks occur strictly on-device when opted in and are never uploaded.\n" +
+                        "• Zero Usage Tracking: ZeroX Boost does not request Package Usage Access or track foreground activity across other apps.\n" +
                         "• Advertising & Consent: Non-intrusive banners on idle browsing screens use the Google Mobile Ads SDK and User Messaging Platform (UMP) where required.\n" +
                         "• Zero Gameplay Interference: Ads never appear during active gaming sessions, benchmarks, scans, tools, or inside the floating overlay.",
                     color = TextSecondary,

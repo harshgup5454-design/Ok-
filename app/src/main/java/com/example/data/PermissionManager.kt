@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 
 enum class AppPermissionType {
     OVERLAY,
-    USAGE_ACCESS,
     NOTIFICATIONS,
     WRITE_SETTINGS,
     DND_ACCESS
@@ -56,9 +55,6 @@ data class PermissionAuditResult(
     val hasNotificationPermission: Boolean
         get() = items.firstOrNull { it.type == AppPermissionType.NOTIFICATIONS }?.status != PermissionStatus.NOT_GRANTED
 
-    val hasUsageAccess: Boolean
-        get() = items.firstOrNull { it.type == AppPermissionType.USAGE_ACCESS }?.status == PermissionStatus.GRANTED
-
     val hasWriteSettings: Boolean
         get() = items.firstOrNull { it.type == AppPermissionType.WRITE_SETTINGS }?.status != PermissionStatus.NOT_GRANTED
 
@@ -76,7 +72,6 @@ object PermissionManager {
         sdkInt: Int = Build.VERSION.SDK_INT
     ): PermissionAuditResult {
         val overlayStatus = getPermissionStatus(context, AppPermissionType.OVERLAY, sdkInt)
-        val usageStatus = getPermissionStatus(context, AppPermissionType.USAGE_ACCESS, sdkInt)
         val notifStatus = getPermissionStatus(context, AppPermissionType.NOTIFICATIONS, sdkInt)
         val writeStatus = getPermissionStatus(context, AppPermissionType.WRITE_SETTINGS, sdkInt)
         val dndStatus = getPermissionStatus(context, AppPermissionType.DND_ACCESS, sdkInt)
@@ -108,16 +103,6 @@ object PermissionManager {
                 isRequiredForOverlay = true,
                 isRuntimePermission = false,
                 status = overlayStatus
-            ),
-            PermissionDescriptor(
-                type = AppPermissionType.USAGE_ACCESS,
-                title = "Usage Access",
-                featurePurpose = "Optional Auto Game Detection",
-                rationale = "Optional. Used only when Autopilot auto-detection is enabled to see which game is currently in the foreground. All checks stay local on-device.",
-                settingsStepHint = "In Usage Access settings, select ZeroX Boost and turn on 'Permit usage access'.",
-                isRequiredForOverlay = false,
-                isRuntimePermission = false,
-                status = usageStatus
             ),
             PermissionDescriptor(
                 type = AppPermissionType.NOTIFICATIONS,
@@ -174,13 +159,6 @@ object PermissionManager {
                         false
                     }
                     if (allowed) PermissionStatus.GRANTED else PermissionStatus.NOT_GRANTED
-                }
-            }
-            AppPermissionType.USAGE_ACCESS -> {
-                if (GameSpaceManager.hasUsageStatsPermission(context)) {
-                    PermissionStatus.GRANTED
-                } else {
-                    PermissionStatus.NOT_GRANTED
                 }
             }
             AppPermissionType.NOTIFICATIONS -> {
@@ -261,12 +239,6 @@ object PermissionManager {
                     intents.add(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, packageUri))
                     intents.add(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
                 }
-            }
-            AppPermissionType.USAGE_ACCESS -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    intents.add(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, packageUri))
-                }
-                intents.add(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
             }
             AppPermissionType.NOTIFICATIONS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

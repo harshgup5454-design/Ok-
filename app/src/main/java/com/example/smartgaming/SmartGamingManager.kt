@@ -1,6 +1,5 @@
 package com.example.smartgaming
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -96,20 +95,13 @@ object SmartGamingManager {
     }
 
     fun refreshUsageAccessStatus(context: Context): Boolean {
-        val hasUsage = GameSpaceManager.hasUsageStatsPermission(context)
-        val autoDetectEnabled = OverlayPreferences.config.value.autoDetectForegroundGame
-        val statusText = when {
-            !autoDetectEnabled -> "Auto-detection off (Manual & Game Space launch active)"
-            !hasUsage -> "Usage Access unavailable / not granted — grant in Settings for auto-launch detection"
-            else -> "Usage Access active — monitoring supported games"
-        }
         _autopilotState.update { current ->
             current.copy(
-                usageAccessGranted = hasUsage,
-                detectionStatus = statusText
+                usageAccessGranted = false,
+                detectionStatus = "Direct Gaming Space & Autopilot launch active (zero usage tracking)"
             )
         }
-        return hasUsage
+        return false
     }
 
     fun updateSessionTelemetry(
@@ -189,13 +181,11 @@ object SmartGamingManager {
         applied.add("Thermal & battery telemetry monitoring (${intervalMs / 1000}s cadence)")
         skipped.add("In-game graphics, sensitivity & FPS caps: Read-only (OS sandbox)")
 
-        val hasUsage = GameSpaceManager.hasUsageStatsPermission(context)
-
         _autopilotState.update { current ->
             current.copy(
                 isSessionActive = true,
                 wasAutoDetected = wasAutoDetected,
-                usageAccessGranted = hasUsage,
+                usageAccessGranted = false,
                 activeProfile = profileType,
                 monitoringIntervalMs = intervalMs,
                 sessionStartTimeMs = System.currentTimeMillis(),
@@ -261,8 +251,8 @@ object SmartGamingManager {
     }
 
     /**
-     * Evaluates foreground app state using UsageStatsManager when permitted,
-     * updating detection status and triggering profile-matched session start/stop.
+     * Cross-app UsageStatsManager polling has been removed for privacy minimization;
+     * refreshes honest manual session status without reading other apps' usage history.
      */
     suspend fun evaluateForegroundDetection(
         context: Context,
@@ -270,39 +260,7 @@ object SmartGamingManager {
         database: GameBoostDatabase,
         selfPackage: String = context.packageName
     ) {
-        val current = _autopilotState.value
-        val autoDetect = OverlayPreferences.config.value.autoDetectForegroundGame
-        if (!current.isAutopilotEnabled || !autoDetect) {
-            refreshUsageAccessStatus(context)
-            return
-        }
-
-        val hasUsage = GameSpaceManager.hasUsageStatsPermission(context)
-        if (!hasUsage) {
-            _autopilotState.update {
-                it.copy(
-                    usageAccessGranted = false,
-                    detectionStatus = "Usage Access denied or revoked — using manual launch mode"
-                )
-            }
-            return
-        }
-
-        _autopilotState.update {
-            it.copy(
-                usageAccessGranted = true,
-                detectionStatus = "Usage Access active — monitoring supported games"
-            )
-        }
-
-        val fgPkg = GameSpaceManager.getRecentForegroundPackage(context)
-        evaluateForegroundPackage(
-            context = context,
-            foregroundPackage = fgPkg,
-            knownProfiles = knownProfiles,
-            database = database,
-            selfPackage = selfPackage
-        )
+        refreshUsageAccessStatus(context)
     }
 
     /**
@@ -346,94 +304,48 @@ object SmartGamingManager {
     }
 
     /**
-     * Scans for running applications using public Android ActivityManager APIs.
-     * Identifies background processes and allows opening system settings.
+     * Populates privacy-preserving system shortcuts for managing background battery restrictions
+     * without scanning runningAppProcesses or probing unrelated third-party apps.
      */
     fun refreshBackgroundProcesses(context: Context) {
-        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-        val pm = context.packageManager
-        val list = mutableListOf<BackgroundAppItem>()
-
-        if (activityManager != null) {
-            try {
-                val runningProcesses = activityManager.runningAppProcesses ?: emptyList()
-                val myPkg = context.packageName
-
-                for (proc in runningProcesses) {
-                    if (proc.pkgList != null) {
-                        for (pkg in proc.pkgList) {
-                            if (pkg == myPkg || pkg.startsWith("com.android.") || pkg.startsWith("android")) continue
-
-                            val appLabel = try {
-                                val appInfo = pm.getApplicationInfo(pkg, 0)
-                                pm.getApplicationLabel(appInfo).toString()
-                            } catch (_: Exception) {
-                                pkg
-                            }
-
-                            val importance = when (proc.importance) {
-                                ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND -> "Active Foreground"
-                                ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "Visible UI"
-                                ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "Background Service"
-                                ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "Cached / Standby"
-                                else -> "Background Process"
-                            }
-
-                            val advice = when {
-                                pkg.contains("music") || pkg.contains("spotify") -> "Background audio stream consuming network/audio buffer."
-                                pkg.contains("social") || pkg.contains("instagram") || pkg.contains("facebook") -> "Heavy background push sync and RAM consumption."
-                                pkg.contains("browser") || pkg.contains("chrome") -> "Multiple WebKit render processes consuming available RAM."
-                                else -> "Consider restricting background battery activity in App Details."
-                            }
-
-                            list.add(
-                                BackgroundAppItem(
-                                    packageName = pkg,
-                                    appName = appLabel,
-                                    importanceCategory = importance,
-                                    advice = advice
-                                )
-                            )
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-
-        // If list is empty due to Android 11+ process isolation, provide known heavy apps if installed
-        if (list.isEmpty()) {
-            val commonApps = listOf(
-                Pair("com.google.android.youtube", "YouTube"),
-                Pair("com.whatsapp", "WhatsApp"),
-                Pair("com.instagram.android", "Instagram"),
-                Pair("com.facebook.katana", "Facebook"),
-                Pair("com.spotify.music", "Spotify")
+        _backgroundApps.value = listOf(
+            BackgroundAppItem(
+                packageName = SYSTEM_BATTERY_OPTIMIZATION_SETTINGS,
+                appName = "Android Battery Optimization Settings",
+                importanceCategory = "System Control",
+                advice = "Open Android battery optimization settings to manage background restrictions per app."
+            ),
+            BackgroundAppItem(
+                packageName = SYSTEM_MANAGE_APPS_SETTINGS,
+                appName = "Installed Apps & Background Activity",
+                importanceCategory = "System Control",
+                advice = "Review installed apps in Android Settings and set heavy apps to 'Restricted' before gaming."
             )
-            for ((pkg, label) in commonApps) {
-                if (GameSpaceManager.isPackageInstalled(context, pkg)) {
-                    list.add(
-                        BackgroundAppItem(
-                            packageName = pkg,
-                            appName = label,
-                            importanceCategory = "Installed App",
-                            advice = "May sync data in background. Open App Settings to manage battery restrictions."
-                        )
-                    )
-                }
-            }
-        }
-
-        _backgroundApps.value = list.distinctBy { it.packageName }
+        )
     }
 
+    private const val SYSTEM_BATTERY_OPTIMIZATION_SETTINGS = "system:battery_optimization"
+    private const val SYSTEM_MANAGE_APPS_SETTINGS = "system:manage_apps"
+
     /**
-     * Opens official Android App Details Settings where the user can manage background activity,
-     * restricted battery usage, or force stop the app themselves.
+     * Opens official Android App Details or System Battery/Apps Settings where the user can
+     * manage background activity or force stop apps manually.
      */
     fun openAppDetailsSettings(context: Context, packageName: String): Boolean {
         return try {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
+            val intent = when (packageName) {
+                SYSTEM_BATTERY_OPTIMIZATION_SETTINGS -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    } else {
+                        Intent(Settings.ACTION_APPLICATION_SETTINGS)
+                    }
+                }
+                SYSTEM_MANAGE_APPS_SETTINGS -> Intent(Settings.ACTION_APPLICATION_SETTINGS)
+                else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+            }.apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)

@@ -1,7 +1,5 @@
 package com.example.data
 
-import android.app.AppOpsManager
-import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -9,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
-import android.os.Process
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
@@ -105,71 +102,6 @@ object GameSpaceManager {
 
         return apps.distinctBy { it.packageName }
             .sortedWith(compareByDescending<InstalledAppItem> { it.isGameCategory }.thenBy { it.appName.lowercase() })
-    }
-
-    /**
-     * Checks if user granted optional Usage Access permission (PACKAGE_USAGE_STATS).
-     */
-    fun hasUsageStatsPermission(context: Context): Boolean {
-        return try {
-            val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager ?: return false
-            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
-            } else {
-                @Suppress("DEPRECATION")
-                appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
-            }
-            mode == AppOpsManager.MODE_ALLOWED
-        } catch (_: Exception) {
-            false
-        }
-    }
-
-    /**
-     * Reads most recent foreground package using UsageStatsManager ONLY when user granted permission.
-     * Queries UsageEvents first for accurate app transitions on Android 8+, falling back to interval usage stats.
-     * Returns null when permission is missing or restricted by OS/OEM.
-     */
-    fun getRecentForegroundPackage(context: Context): String? {
-        if (!hasUsageStatsPermission(context)) return null
-        return try {
-            val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager ?: return null
-            val now = System.currentTimeMillis()
-            val windowStart = now - 60_000L
-
-            var latestPkg: String? = null
-            var latestTime = 0L
-
-            try {
-                val events = usm.queryEvents(windowStart, now)
-                if (events != null) {
-                    val event = android.app.usage.UsageEvents.Event()
-                    while (events.hasNextEvent()) {
-                        events.getNextEvent(event)
-                        val isForegroundEvent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            event.eventType == android.app.usage.UsageEvents.Event.ACTIVITY_RESUMED ||
-                                event.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND
-                        } else {
-                            @Suppress("DEPRECATION")
-                            event.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND
-                        }
-                        if (isForegroundEvent && event.timeStamp >= latestTime && !event.packageName.isNullOrBlank()) {
-                            latestTime = event.timeStamp
-                            latestPkg = event.packageName
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-
-            if (!latestPkg.isNullOrBlank()) {
-                return latestPkg
-            }
-
-            val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, windowStart, now)
-            stats?.maxByOrNull { it.lastTimeUsed }?.packageName
-        } catch (_: Exception) {
-            null
-        }
     }
 
     /**

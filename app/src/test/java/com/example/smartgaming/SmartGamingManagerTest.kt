@@ -133,20 +133,12 @@ class SmartGamingManagerTest {
             .allowMainThreadQueries()
             .build()
         try {
-            com.example.data.OverlayPreferences.update(context) { it.copy(autoDetectForegroundGame = true) }
-            val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
-            org.robolectric.Shadows.shadowOf(appOps).setMode(
-                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                context.packageName,
-                android.app.AppOpsManager.MODE_IGNORED
-            )
             SmartGamingManager.setAutopilotMasterEnabled(true)
             val hasUsage = SmartGamingManager.refreshUsageAccessStatus(context)
             assertFalse(hasUsage)
             assertFalse(SmartGamingManager.autopilotState.value.usageAccessGranted)
 
-            // Evaluating foreground detection without Usage Access permission handles denial safely
+            // Evaluating foreground detection stays non-invasive without Usage Access
             SmartGamingManager.evaluateForegroundDetection(context, emptyList(), db)
             assertFalse(SmartGamingManager.autopilotState.value.isSessionActive)
 

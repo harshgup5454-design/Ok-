@@ -44,7 +44,6 @@ import com.example.ui.components.GamingSidebarContainer
 import com.example.ui.screens.*
 import com.example.ui.theme.*
 import com.example.viewmodel.GameBoostViewModel
-import kotlinx.coroutines.delay
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Dashboard : Screen("dashboard", "Home", Icons.Default.Home)
@@ -215,12 +214,8 @@ class MainActivity : ComponentActivity() {
                 val sessionLaunchPrompt by viewModel.sessionLaunchPrompt.collectAsState()
                 val entitlement by MembershipManager.entitlement.collectAsState()
 
-                LaunchedEffect(autopilotState.isAutopilotEnabled, overlayConfig.autoDetectForegroundGame) {
+                LaunchedEffect(Unit) {
                     viewModel.refreshUsageAccessStatus(applicationContext)
-                    while (autopilotState.isAutopilotEnabled && overlayConfig.autoDetectForegroundGame) {
-                        viewModel.evaluateForegroundGameDetection(applicationContext)
-                        delay(10_000L)
-                    }
                 }
 
                 val activeProfileShort = when (autopilotState.activeProfile) {

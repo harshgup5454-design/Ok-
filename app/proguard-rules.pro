@@ -12,6 +12,14 @@
 #   public *;
 #}
 
+# Strip debug/verbose/info logs in release builds
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int d(...);
+}
+
 # Preserve source line numbers for crash diagnostics
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
@@ -23,14 +31,10 @@
 -keep class * extends androidx.room.RoomDatabase$Callback
 -dontwarn androidx.room.paging.**
 
-# Preserve data models, diagnostics, and engines used across ViewModels & Service
--keep class com.example.data.** { *; }
--keep class com.example.viewmodel.** { *; }
--keep class com.example.smartgaming.** { *; }
--keep class com.example.billing.** { *; }
-
-# Google Play Billing Library
+# Google Play Billing Library & verification gateway contracts
 -keep class com.android.billingclient.api.** { *; }
+-keep class com.example.billing.BillingUiState { *; }
+-keep class com.example.billing.BillingOffer { *; }
 
 # Google Mobile Ads & User Messaging Platform (UMP)
 -keep public class com.google.android.gms.ads.** { public *; }
@@ -42,7 +46,6 @@
 -keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
 -dontwarn kotlinx.coroutines.flow.**
 
-# Keep foreground service & overlay state classes intact
+# Keep foreground service entry point intact
 -keep class com.example.service.GamingOverlayService { *; }
--keep class com.example.ads.** { *; }
 

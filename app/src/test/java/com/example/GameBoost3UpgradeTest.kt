@@ -19,6 +19,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
+@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.LEGACY)
 class GameBoost3UpgradeTest {
 
     @get:Rule
@@ -167,8 +168,7 @@ class GameBoost3UpgradeTest {
         assertEquals(15000L, SmartGamingManager.getIntervalForProfile(ProfileType.BATTERY_FRIENDLY))
 
         val context = ApplicationProvider.getApplicationContext<Context>()
-        // In Robolectric, UsageStatsManager has no usage events and returns null safely without throwing
-        assertNull(GameSpaceManager.getRecentForegroundPackage(context))
+        assertFalse(SmartGamingManager.refreshUsageAccessStatus(context))
     }
 
     @Test

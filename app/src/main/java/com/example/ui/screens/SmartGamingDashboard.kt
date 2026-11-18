@@ -108,7 +108,7 @@ fun SmartGamingDashboard(
                             letterSpacing = 1.1.sp
                         )
                         Text(
-                            text = "Universal Game Detection & Safe System Profiles",
+                            text = "Game Space Session Profiles & Safe System Tuning",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
@@ -612,19 +612,6 @@ fun SmartGamingDashboard(
                         val canWrite = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) Settings.System.canWrite(context) else true
                         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                         val canDnd = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) nm?.isNotificationPolicyAccessGranted == true else true
-                        val hasUsage = autopilotState.usageAccessGranted
-
-                        PermissionStatusRow(
-                            label = "Usage Access (Auto Game Detection)",
-                            isGranted = hasUsage,
-                            description = "Optional: allows Autopilot to detect when supported games open or close.",
-                            onFix = {
-                                val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                try { context.startActivity(intent) } catch (_: Exception) {}
-                            }
-                        )
 
                         PermissionStatusRow(
                             label = "Modify System Settings",

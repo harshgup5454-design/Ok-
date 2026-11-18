@@ -44,11 +44,10 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.example.BuildConfig
 import com.example.MainActivity
 import com.example.R
 import com.example.data.DeviceMonitor
-import com.example.data.GameBoostDatabase
-import com.example.data.GameSpaceManager
 import com.example.data.GamingProtectionEngine
 import com.example.data.NetworkMonitor
 import com.example.data.OverlayPreferences
@@ -120,7 +119,6 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     private var isTimerRunning by mutableStateOf(true)
     private var isAimTrainerQueued by mutableStateOf(false)
     private var aimTrainerStatusHint by mutableStateOf<String?>(null)
-    private var queuedGamePackage: String? = null
 
     private var memoryUsage by mutableStateOf(0)
     private var availMemory by mutableStateOf(0f)
@@ -170,7 +168,9 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.US)
 
         fun logEvent(message: String) {
-            Log.d(TAG, message)
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, message)
+            }
             val stamp = timeFormat.format(Date())
             val entry = "[$stamp] $message"
             _diagnosticLogs.value = (listOf(entry) + _diagnosticLogs.value).take(35)
@@ -494,7 +494,6 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         serviceScope.launch {
             logEvent("Battery-aware telemetry polling started")
             var firstPass = true
-            val db = GameBoostDatabase.getDatabase(applicationContext)
             while (isActive) {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this@GamingOverlayService)) {
@@ -540,36 +539,12 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             longSessionReminderMinutes = reminderMins
                         )
                     }
-                    if (autopilot.isAutopilotEnabled && OverlayPreferences.config.value.autoDetectForegroundGame) {
-                        val knownProfiles = withContext(Dispatchers.IO) {
-                            db.gameSpaceDao().getAllGameProfiles().map { it.toDomain() }
-                        }
-                        SmartGamingManager.evaluateForegroundDetection(
-                            context = applicationContext,
-                            knownProfiles = knownProfiles,
-                            database = db,
-                            selfPackage = packageName
-                        )
-                    }
-
-                    // Check queued Aim Trainer launch: open ONLY when the user leaves the running game
-                    if (isAimTrainerQueued) {
-                        val fgPkg = withContext(Dispatchers.IO) {
-                            GameSpaceManager.getRecentForegroundPackage(applicationContext)
-                        }
-                        val leftGame = when {
-                            _isAppInForeground.value -> true
-                            fgPkg != null && queuedGamePackage != null && fgPkg != queuedGamePackage -> true
-                            fgPkg != null && !isKnownGameOrExternalApp(fgPkg, packageName) -> true
-                            else -> false
-                        }
-                        if (leftGame) {
-                            isAimTrainerQueued = false
-                            aimTrainerStatusHint = null
-                            queuedGamePackage = null
-                            _pendingAimTrainerOnReturn.value = false
-                            launchMainDestination(ROUTE_AIM, AIM_TAB_TRAINER)
-                        }
+                    // Check queued Aim Trainer launch: open when the user returns to ZeroX Boost
+                    if (isAimTrainerQueued && _isAppInForeground.value) {
+                        isAimTrainerQueued = false
+                        aimTrainerStatusHint = null
+                        _pendingAimTrainerOnReturn.value = false
+                        launchMainDestination(ROUTE_AIM, AIM_TAB_TRAINER)
                     }
 
                     if (firstPass || isSidebarOpen) {
@@ -728,18 +703,11 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     }
 
     private fun handleRequestAimTrainer() {
-        val fgPkg = GameSpaceManager.getRecentForegroundPackage(applicationContext)
-        val inExternalGame = !_isAppInForeground.value && (fgPkg == null || isKnownGameOrExternalApp(fgPkg, packageName))
-        if (inExternalGame) {
+        if (!_isAppInForeground.value) {
             isAimTrainerQueued = true
-            queuedGamePackage = fgPkg
             _pendingAimTrainerOnReturn.value = true
-            aimTrainerStatusHint = if (fgPkg != null) {
-                "Queued — Aim Trainer opens when you exit the game."
-            } else {
-                "Exit your game & return to ZeroX Boost to open Aim Trainer."
-            }
-            logEvent("Aim Trainer deferred while game is active (fg=${fgPkg ?: "unknown"})")
+            aimTrainerStatusHint = "Exit your game & return to ZeroX Boost to open Aim Trainer."
+            logEvent("Aim Trainer deferred while external game is active")
         } else {
             isAimTrainerQueued = false
             aimTrainerStatusHint = null
@@ -882,7 +850,6 @@ class GamingOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             onCancelAimTrainerQueue = {
                                 isAimTrainerQueued = false
                                 aimTrainerStatusHint = null
-                                queuedGamePackage = null
                                 _pendingAimTrainerOnReturn.value = false
                             },
                             onPersistAppearance = { accent, opacity, compact ->

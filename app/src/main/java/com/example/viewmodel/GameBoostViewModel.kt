@@ -799,17 +799,14 @@ class GameBoostViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
 
-        // 8. Launch selected game if installed and not already in foreground
+        // 8. Launch selected game directly via standard Android launch intent
         if (targetPackage.isNotBlank() && !allowWithoutGameLaunch) {
-            val fgPkg = GameSpaceManager.getRecentForegroundPackage(context)
-            if (fgPkg != targetPackage) {
-                val launched = GameSpaceManager.launchGame(context, targetPackage)
-                if (launched && selectedProfile != null) {
-                    viewModelScope.launch {
-                        gameSpaceRepository.saveProfile(
-                            selectedProfile.copy(lastPlayedTimestamp = System.currentTimeMillis())
-                        )
-                    }
+            val launched = GameSpaceManager.launchGame(context, targetPackage)
+            if (launched && selectedProfile != null) {
+                viewModelScope.launch {
+                    gameSpaceRepository.saveProfile(
+                        selectedProfile.copy(lastPlayedTimestamp = System.currentTimeMillis())
+                    )
                 }
             }
         }
