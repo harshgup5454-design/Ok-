@@ -31,10 +31,17 @@ import com.example.data.MembershipManager
 import com.example.ui.components.*
 import com.example.ui.theme.*
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+
 @Composable
 fun PremiumScreen(
-    billingManager: BillingManager = GooglePlayBillingManager
+    billingManager: BillingManager = GooglePlayBillingManager,
+    onBackClick: (() -> Unit)? = null
 ) {
+    if (onBackClick != null) {
+        BackHandler { onBackClick() }
+    }
     val context = LocalContext.current
     val activity = remember(context) { context.findBillingActivity() }
     val entitlement by MembershipManager.entitlement.collectAsState()
@@ -64,6 +71,20 @@ fun PremiumScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            if (onBackClick != null) {
+                                IconButton(
+                                    onClick = onBackClick,
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .testTag("premium_back_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Back",
+                                        tint = TextPrimary
+                                    )
+                                }
+                            }
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
                                 color = NeonPurple.copy(alpha = 0.2f),
@@ -109,7 +130,11 @@ fun PremiumScreen(
                     }
 
                     Text(
-                        text = "Optional Pro upgrade via Google Play Billing. All core diagnostics, Autopilot, and benchmark tools remain 100% Free.",
+                        text = if (billingState.connectionState == BillingConnectionState.SERVICE_UNAVAILABLE) {
+                            "Pro upgrades are processed through Google Play Store when installed via Google Play. All core ZeroX Boost diagnostics, Autopilot, Network, Aim Lab, and Benchmark tools remain 100% Free."
+                        } else {
+                            "Optional Pro upgrade via Google Play Billing. All core diagnostics, Autopilot, and benchmark tools remain 100% Free."
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -347,7 +372,7 @@ fun PremiumScreen(
                     ComparisonRow("Core Hardware Diagnostics", "Included", "Included")
                     ComparisonRow("Gateway Latency & Jitter", "Included", "Included")
                     ComparisonRow("Benchmark Lab & Aim Lab", "Included", "Included")
-                    ComparisonRow("Game Space & Autopilot 3.0", "Included", "Included")
+                    ComparisonRow("Game Space & Gaming Autopilot", "Included", "Included")
                     ComparisonRow("Advertisements", "Home & Reports", "Completely Ad-Free")
                     ComparisonRow("Overlay Themes & Accents", "Cyan Default", "Purple / Green / OLED")
                     ComparisonRow("Game Profile Customization", "3 Core Profiles", "+ Pro Presets & Tags")
@@ -376,7 +401,7 @@ fun PremiumScreen(
                         text = "• Billing & Auto-Renewal: Subscriptions are billed exclusively through your Google Play account and renew automatically unless cancelled at least 24 hours before the end of the current period.\n" +
                             "• Easy Cancellation: Tap 'Manage Subscription' above or open Google Play → Payments & subscriptions anytime. Cancelled plans stay active until the paid period ends.\n" +
                             "• Pending Payments & Refunds: Pending payments unlock Pro only after Google Play confirms payment. Refunded, voided, or expired subscriptions revoke Pro access automatically.\n" +
-                            "• Essential Tools Always Free: Hardware telemetry, Network diagnostics, Benchmark Lab, Aim Lab, Game Space, and Autopilot 3.0 remain 100% Free.",
+                            "• Essential Tools Always Free: Hardware telemetry, Network diagnostics, Benchmark Lab, Aim Lab, Game Space, and Gaming Autopilot remain 100% Free.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )

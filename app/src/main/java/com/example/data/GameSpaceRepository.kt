@@ -19,13 +19,7 @@ class GameSpaceRepository(context: Context) {
         }
 
     val sessionsFlow: Flow<List<BenchmarkSessionReport>> = dao.getAllSessionReportsFlow()
-        .map { entities ->
-            if (entities.isEmpty()) {
-                BenchmarkRepository.getAllSessions()
-            } else {
-                entities.map { it.toDomain() }
-            }
-        }
+        .map { entities -> entities.map { it.toDomain() } }
 
     val benchmarkLabResultsFlow: Flow<List<BenchmarkLabRunResult>> = dao.getAllBenchmarkLabResultsFlow()
         .map { entities -> entities.map { BenchmarkLabRunResult.fromEntity(it) } }
@@ -45,12 +39,6 @@ class GameSpaceRepository(context: Context) {
         if (existing.isEmpty()) {
             for (profile in GameProfilesRepository.getDefaultProfiles()) {
                 dao.insertGameProfile(GameProfileEntity.fromDomain(profile))
-            }
-        }
-        val existingSessions = dao.getAllSessionReports()
-        if (existingSessions.isEmpty()) {
-            for (session in BenchmarkRepository.getAllSessions()) {
-                dao.insertSessionReport(SessionReportEntity.fromDomain(session))
             }
         }
         val persistedNet = networkDao.getHistory()

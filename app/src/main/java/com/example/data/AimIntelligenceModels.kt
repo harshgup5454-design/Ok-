@@ -136,7 +136,7 @@ class AimIntelligenceRepository(context: Context) {
             val sniper = (baseGen * 0.45f).toInt().coerceIn(5, 80)
             val freeLook = (baseGen * 1.1f).toInt().coerceIn(30, 160)
 
-            val rationale = "Calculated via transparent heuristic formula: Base camera scalar ($dpiTier DPI hardware tier) multiplied by movement style coefficient ($multiplier) for $gameName. NOTE: GAMEBOOST touch recommendations are mathematical baselines. Always verify and manually test sensitivity in your in-game training room."
+            val rationale = "Calculated via transparent heuristic formula: Base camera scalar ($dpiTier DPI hardware tier) multiplied by movement style coefficient ($multiplier) for $gameName. NOTE: ZeroX Boost touch recommendations are mathematical baselines. Always verify and manually test sensitivity in your in-game training room."
 
             return SensitivityProfile(
                 profileName = "$gameName ($style)",

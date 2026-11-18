@@ -389,7 +389,7 @@ fun HelpFaqScreen(
                 id = "pro",
                 category = "Billing",
                 question = "Do I need ZeroX Boost Pro to use diagnostics or the sidebar?",
-                answer = "No. Core hardware telemetry, Game Space, Network Intelligence, Benchmark Lab, Aim Lab, Autopilot 3.0, and the Floating Sidebar are 100% free. Optional ZeroX Boost Pro removes idle ads, unlocks Purple/Green/OLED sidebar accents, adds Pro profile presets, and expands report history/export."
+                answer = "No. Core hardware telemetry, Game Space, Network Intelligence, Benchmark Lab, Aim Lab, ZeroX Autopilot, and the Floating Sidebar are 100% free. Optional ZeroX Boost Pro removes idle ads, unlocks Purple/Green/OLED sidebar accents, adds Pro profile presets, and expands report history/export."
             )
         )
     }

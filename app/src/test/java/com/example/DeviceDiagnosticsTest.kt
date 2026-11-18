@@ -91,7 +91,7 @@ class DeviceDiagnosticsTest {
         )
 
         assertNotNull(report)
-        assertTrue(report.exportableText.contains("GAMEBOOST DEVICE DIAGNOSTIC REPORT"))
+        assertTrue(report.exportableText.contains("ZEROX BOOST DEVICE DIAGNOSTIC REPORT"))
         assertTrue(report.exportableText.contains("STORAGE DIAGNOSTICS"))
         assertTrue(report.exportableText.contains("DISPLAY DIAGNOSTICS"))
         assertTrue(report.exportableText.contains("BATTERY DIAGNOSTICS"))

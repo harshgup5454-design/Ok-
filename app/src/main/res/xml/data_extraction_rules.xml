@@ -4,14 +4,11 @@
    for details.
 -->
 <data-extraction-rules>
+    <!-- Strict allowlist: only user overlay preferences are backed up/transferred; device-specific state and local Room DB are excluded -->
     <cloud-backup>
         <include domain="sharedpref" path="gameboost_overlay_prefs.xml" />
-        <exclude domain="database" path="gameboost_database" />
-        <exclude domain="sharedpref" path="gameboost_permissions_prefs.xml" />
-        <exclude domain="sharedpref" path="gameboost_session_restore.xml" />
     </cloud-backup>
     <device-transfer>
         <include domain="sharedpref" path="gameboost_overlay_prefs.xml" />
-        <exclude domain="sharedpref" path="gameboost_session_restore.xml" />
     </device-transfer>
 </data-extraction-rules>

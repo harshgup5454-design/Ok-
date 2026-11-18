@@ -34,13 +34,20 @@ import java.util.Locale
 import kotlin.math.hypot
 import kotlin.random.Random
 
+import androidx.compose.ui.platform.LocalDensity
+import kotlin.math.PI
+import kotlin.math.sin
+
 data class TargetNode(
     val id: Int,
     val initialX: Float,
     val initialY: Float,
     val radius: Float,
     val spawnTime: Long,
-    val movementPattern: String
+    val movementPattern: String,
+    val baseRadius: Float = radius,
+    val vx: Float = 0f,
+    val vy: Float = 0f
 )
 
 @Composable
@@ -74,6 +81,9 @@ fun AimIntelligenceScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
     var selectedTab by remember(initialTab) { mutableStateOf(initialTab.coerceIn(0, 5)) }
+    LaunchedEffect(initialTab) {
+        selectedTab = initialTab.coerceIn(0, 5)
+    }
     var showExportDialog by remember { mutableStateOf(false) }
     var exportedText by remember { mutableStateOf("") }
     var showImportDialog by remember { mutableStateOf(false) }
@@ -694,6 +704,46 @@ fun AimTrainerMiniGameSection(
         adManager.canDisplayAds(aimVisibility)
     }
 
+    val density = LocalDensity.current
+    val baseRadiusPx = remember(targetSize, density) {
+        val radiusDp = when (targetSize) {
+            "Small" -> 14.dp
+            "Large" -> 30.dp
+            else -> 22.dp
+        }
+        with(density) { radiusDp.toPx() }
+    }
+    var arenaWidthPx by remember { mutableStateOf(0f) }
+    var arenaHeightPx by remember { mutableStateOf(0f) }
+
+    fun spawnTarget(nextId: Int): TargetNode {
+        val margin = baseRadiusPx * 1.6f
+        val safeW = if (arenaWidthPx > margin * 2f) arenaWidthPx else (margin * 4f + 360f)
+        val safeH = if (arenaHeightPx > margin * 2f) arenaHeightPx else (margin * 4f + 260f)
+        val usableW = (safeW - margin * 2f).coerceAtLeast(80f)
+        val usableH = (safeH - margin * 2f).coerceAtLeast(80f)
+        val speedFactor = when (difficulty) {
+            "Expert" -> 3.6f
+            "Hard" -> 2.7f
+            "Medium" -> 1.9f
+            else -> 1.2f
+        } * density.density
+        val angle = Random.nextFloat() * (2f * PI.toFloat())
+        val vx = if (targetMovement == "Moving (Drift)") kotlin.math.cos(angle) * speedFactor else 0f
+        val vy = if (targetMovement == "Moving (Drift)") kotlin.math.sin(angle) * speedFactor else 0f
+        return TargetNode(
+            id = nextId,
+            initialX = margin + Random.nextFloat() * usableW,
+            initialY = margin + Random.nextFloat() * usableH,
+            radius = baseRadiusPx,
+            spawnTime = System.currentTimeMillis(),
+            movementPattern = targetMovement,
+            baseRadius = baseRadiusPx,
+            vx = vx,
+            vy = vy
+        )
+    }
+
     LaunchedEffect(isPlaying, timeLeft) {
         if (isPlaying && timeLeft > 0) {
             delay(1000L)
@@ -702,8 +752,10 @@ fun AimTrainerMiniGameSection(
                 isPlaying = false
                 sessionFinished = true
                 val totalAttempts = (targetsHit + missCount).coerceAtLeast(1)
-                lastAccuracy = (targetsHit.toFloat() / totalAttempts.toFloat()) * 100f
-                lastAvgReaction = if (reactionTimes.isNotEmpty()) reactionTimes.average().toInt() else 320
+                lastAccuracy = if (targetsHit + missCount > 0) {
+                    (targetsHit.toFloat() / totalAttempts.toFloat()) * 100f
+                } else 0f
+                lastAvgReaction = if (reactionTimes.isNotEmpty()) reactionTimes.average().toInt() else 0
 
                 onSaveSession(
                     AimTrainingSessionStats(
@@ -726,6 +778,58 @@ fun AimTrainerMiniGameSection(
         }
     }
 
+    // Reposition initial target cleanly once actual Canvas bounds are measured, and drive Drift / Pulsing motion
+    LaunchedEffect(isPlaying, targetMovement, difficulty, arenaWidthPx, arenaHeightPx) {
+        if (!isPlaying || arenaWidthPx <= 0f || arenaHeightPx <= 0f) return@LaunchedEffect
+        val existing = currentTarget
+        val margin = baseRadiusPx * 1.6f
+        if (existing == null || existing.initialX > arenaWidthPx - margin || existing.initialY > arenaHeightPx - margin) {
+            currentTarget = spawnTarget(existing?.id ?: 1)
+        }
+        if (targetMovement == "Stationary") return@LaunchedEffect
+        val pulseFreq = when (difficulty) {
+            "Expert" -> 6.5f
+            "Hard" -> 5.0f
+            "Medium" -> 3.6f
+            else -> 2.4f
+        }
+        while (isPlaying) {
+            delay(16L)
+            val node = currentTarget ?: continue
+            val currentMargin = node.baseRadius * 1.6f
+            val maxX = (arenaWidthPx - currentMargin).coerceAtLeast(currentMargin)
+            val maxY = (arenaHeightPx - currentMargin).coerceAtLeast(currentMargin)
+            when (node.movementPattern) {
+                "Moving (Drift)" -> {
+                    var nextX = node.initialX + node.vx
+                    var nextY = node.initialY + node.vy
+                    var nextVx = node.vx
+                    var nextVy = node.vy
+                    if (nextX <= currentMargin) {
+                        nextX = currentMargin
+                        nextVx = kotlin.math.abs(nextVx)
+                    } else if (nextX >= maxX) {
+                        nextX = maxX
+                        nextVx = -kotlin.math.abs(nextVx)
+                    }
+                    if (nextY <= currentMargin) {
+                        nextY = currentMargin
+                        nextVy = kotlin.math.abs(nextVy)
+                    } else if (nextY >= maxY) {
+                        nextY = maxY
+                        nextVy = -kotlin.math.abs(nextVy)
+                    }
+                    currentTarget = node.copy(initialX = nextX, initialY = nextY, vx = nextVx, vy = nextVy)
+                }
+                "Pulsing" -> {
+                    val elapsedSec = (System.currentTimeMillis() - node.spawnTime) / 1000f
+                    val scale = 0.92f + 0.28f * sin(elapsedSec * pulseFreq)
+                    currentTarget = node.copy(radius = (node.baseRadius * scale).coerceAtLeast(node.baseRadius * 0.62f))
+                }
+            }
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (shouldShowAimBanner) {
             AdMobAdaptiveBannerSlot(
@@ -741,7 +845,7 @@ fun AimTrainerMiniGameSection(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Polished Aim Trainer", style = MaterialTheme.typography.titleMedium, color = TextPrimary)
+                Text(text = "Precision Aim Trainer", style = MaterialTheme.typography.titleMedium, color = TextPrimary)
                 StatusPillBadge(
                     text = if (isPlaying) "TIME: ${timeLeft}s" else "READY",
                     color = NeonRed,
@@ -813,13 +917,7 @@ fun AimTrainerMiniGameSection(
                             reactionTimes.clear()
                             sessionFinished = false
                             isPlaying = true
-
-                            val radius = when (targetSize) {
-                                "Small" -> 24f
-                                "Large" -> 55f
-                                else -> 38f
-                            }
-                            currentTarget = TargetNode(1, Random.nextFloat() * 220f + 40f, Random.nextFloat() * 160f + 40f, radius, System.currentTimeMillis(), targetMovement)
+                            currentTarget = spawnTarget(1)
                         },
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
@@ -842,9 +940,6 @@ fun AimTrainerMiniGameSection(
                     Text(text = "Misses: $missCount", style = TelemetryMonoStyle.copy(fontSize = 13.sp), color = NeonOrange)
                 }
 
-                var arenaWidthPx by remember { mutableStateOf(0f) }
-                var arenaHeightPx by remember { mutableStateOf(0f) }
-
                 Surface(
                     shape = RoundedCornerShape(14.dp),
                     color = DarkSurfaceElevated,
@@ -856,7 +951,7 @@ fun AimTrainerMiniGameSection(
                             arenaWidthPx = it.width.toFloat()
                             arenaHeightPx = it.height.toFloat()
                         }
-                        .pointerInput(Unit) {
+                        .pointerInput(difficulty, targetSize, targetMovement) {
                             detectTapGestures { offset ->
                                 val target = currentTarget
                                 if (target != null) {
@@ -875,22 +970,7 @@ fun AimTrainerMiniGameSection(
                                         reactionTimes.add(reaction)
 
                                         targetsSpawned++
-                                        val radius = when (targetSize) {
-                                            "Small" -> 24f
-                                            "Large" -> 55f
-                                            else -> 38f
-                                        }
-                                        val margin = radius * 1.6f
-                                        val usableW = (arenaWidthPx - margin * 2f).coerceAtLeast(180f)
-                                        val usableH = (arenaHeightPx - margin * 2f).coerceAtLeast(140f)
-                                        currentTarget = TargetNode(
-                                            targetsSpawned,
-                                            margin + Random.nextFloat() * usableW,
-                                            margin + Random.nextFloat() * usableH,
-                                            radius,
-                                            System.currentTimeMillis(),
-                                            targetMovement
-                                        )
+                                        currentTarget = spawnTarget(targetsSpawned)
                                     } else {
                                         missCount++
                                         currentStreak = 0
@@ -918,7 +998,7 @@ fun AimTrainerMiniGameSection(
 
                     SpecRow("Final Score", "$score")
                     SpecRow("Accuracy", "${String.format(Locale.US, "%.1f", lastAccuracy)}%")
-                    SpecRow("Avg Reaction Time", "$lastAvgReaction ms")
+                    SpecRow("Avg Reaction Time", if (targetsHit > 0 && lastAvgReaction > 0) "$lastAvgReaction ms" else "N/A (0 hits)")
                     SpecRow("Best Streak", "$bestStreak hits")
                     SpecRow("Targets Hit / Missed", "$targetsHit / $missCount")
 
@@ -969,7 +1049,11 @@ fun AccuracyAnalyticsSection(history: List<AimTrainingSessionStats>) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = "Accuracy: ${String.format(Locale.US, "%.1f", session.accuracyPercent)}%", style = TelemetryMonoStyle.copy(fontSize = 11.sp), color = NeonGreen)
-                        Text(text = "Reaction: ${session.avgReactionTimeMs}ms", style = TelemetryMonoStyle.copy(fontSize = 11.sp), color = NeonPurpleBright)
+                        Text(
+                            text = if (session.targetsHit > 0 && session.avgReactionTimeMs > 0) "Reaction: ${session.avgReactionTimeMs}ms" else "Reaction: N/A",
+                            style = TelemetryMonoStyle.copy(fontSize = 11.sp),
+                            color = NeonPurpleBright
+                        )
                         Text(text = "Streak: ${session.bestStreak}", style = TelemetryMonoStyle.copy(fontSize = 11.sp), color = NeonGreen)
                     }
                 }

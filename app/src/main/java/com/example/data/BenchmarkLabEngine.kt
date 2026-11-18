@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 enum class WorkloadType(val displayName: String, val description: String) {
     CPU_MATH("CPU Floating-Point & Math Workload", "Measures core arithmetic throughput using repeatable prime number and vector calculations."),
     MEMORY_BANDWIDTH("Memory Allocation & Bandwidth", "Allocates safe memory buffers, tests read/write throughput, and verifies immediate release."),
-    GRAPHICS_CANVAS("App UI Canvas Rendering Benchmark", "Measures GAMEBOOST internal UI canvas draw loop render times (Strictly App UI, not game FPS).")
+    GRAPHICS_CANVAS("App UI Canvas Rendering Benchmark", "Measures ZeroX Boost internal UI canvas draw loop render times (Strictly App UI, not game FPS).")
 }
 
 data class BenchmarkLabRunResult(
@@ -354,7 +354,7 @@ object BenchmarkLabEngine {
             peakBatteryTempC = currentStats.batteryTemperatureC,
             startThermalStatus = initialStats.powerManagerThermalStatus,
             peakThermalStatus = currentStats.powerManagerThermalStatus,
-            detailsSummary = "App Canvas Render Test: Average frame render time ${String.format(java.util.Locale.US, "%.2f", avgFrameTimeMs)} ms (~${String.format(java.util.Locale.US, "%.1f", effectiveFps)} FPS app render speed). Note: Measures GAMEBOOST UI canvas workload only, not third-party game FPS.",
+            detailsSummary = "App Canvas Render Test: Average frame render time ${String.format(java.util.Locale.US, "%.2f", avgFrameTimeMs)} ms (~${String.format(java.util.Locale.US, "%.1f", effectiveFps)} FPS app render speed). Note: Measures ZeroX Boost UI canvas workload only, not third-party game FPS.",
             wasAbortedDueToThermal = false
         )
     }

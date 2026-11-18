@@ -85,7 +85,7 @@ class GameBoostViewModel(application: Application) : AndroidViewModel(applicatio
     val benchmarkSeconds: StateFlow<Int> = _benchmarkSeconds.asStateFlow()
 
     val benchmarkSessions: StateFlow<List<BenchmarkSessionReport>> = gameSpaceRepository.sessionsFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BenchmarkRepository.getAllSessions())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Benchmark Lab State
     val benchmarkLabResults: StateFlow<List<BenchmarkLabRunResult>> = gameSpaceRepository.benchmarkLabResultsFlow

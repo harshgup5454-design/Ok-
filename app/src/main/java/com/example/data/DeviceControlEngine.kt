@@ -24,7 +24,7 @@ data class OemGamingSpaceInfo(
     val packageName: String,
     val activityName: String? = null,
     val isAvailable: Boolean = false,
-    val note: String = "GAMEBOOST does not control OEM features directly; it provides direct 1-tap launching to the official manufacturer utility."
+    val note: String = "ZeroX Boost does not control OEM features directly; it provides direct 1-tap launching to the official manufacturer utility."
 )
 
 data class DeviceCapabilities(
@@ -739,7 +739,7 @@ object DeviceControlEngine {
                     @Suppress("DEPRECATION")
                     WifiManager.WIFI_MODE_FULL_HIGH_PERF
                 }
-                wifiLock = wifiManager.createWifiLock(mode, "GAMEBOOST_WifiLock").apply {
+                wifiLock = wifiManager.createWifiLock(mode, "ZeroXBoost_WifiLock").apply {
                     setReferenceCounted(false)
                     acquire()
                 }

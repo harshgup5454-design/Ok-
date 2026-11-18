@@ -101,7 +101,7 @@ fun SmartGamingDashboard(
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "GAMING AUTOPILOT 3.0",
+                            text = "ZEROX GAMING AUTOPILOT",
                             style = MaterialTheme.typography.titleMedium,
                             color = NeonPurpleBright,
                             fontWeight = FontWeight.Bold,

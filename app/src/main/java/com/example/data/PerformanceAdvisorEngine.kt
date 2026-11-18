@@ -182,7 +182,7 @@ object PerformanceAdvisorEngine {
                         title = "RAM Headroom Constrained",
                         measuredFact = "System memory usage is at ${stats.memoryUsagePercent}% (${stats.availableMemoryGb} GB free out of ${stats.totalMemoryGb} GB total; system low-mem threshold: ${stats.memoryThresholdGb} GB).",
                         possibleCausesAndOutcomes = "When available memory drops near system low-memory thresholds, the Android Low Memory Killer (LMK) daemon compresses zRAM or reclaims cached pages. This background memory swapping can induce momentary frame drops during game asset texture streaming.",
-                        suggestedAction = "Manually close non-essential background applications (such as social media, web browsers, or video streams) before starting high-fidelity games. GAMEBOOST does not automatically kill background processes.",
+                        suggestedAction = "Manually close non-essential background applications (such as social media, web browsers, or video streams) before starting high-fidelity games. ZeroX Boost does not automatically kill background processes.",
                         severity = RuleSeverity.WARNING,
                         confidenceLabel = "[FACT: Android ActivityManager MemoryInfo]"
                     )
@@ -200,7 +200,7 @@ object PerformanceAdvisorEngine {
                         title = "Internal Storage Scratch Space Low",
                         measuredFact = "Internal storage is ${stats.storageUsagePercent}% full (${stats.availableStorageGb} GB free out of ${stats.totalStorageGb} GB total).",
                         possibleCausesAndOutcomes = "Low disk space reduces available scratch space for game patch downloads, dynamic shader compilation caches, and swap files, which may lead to asset loading delays.",
-                        suggestedAction = "Review and uninstall unused applications or large media files via Android System Settings > Storage. GAMEBOOST never deletes user files automatically.",
+                        suggestedAction = "Review and uninstall unused applications or large media files via Android System Settings > Storage. ZeroX Boost never deletes user files automatically.",
                         severity = RuleSeverity.WARNING,
                         confidenceLabel = "[FACT: Android StatFs Storage API]"
                     )
@@ -255,7 +255,7 @@ object PerformanceAdvisorEngine {
                         title = "Third-Party Live FPS Sandbox Limitation",
                         measuredFact = "Live frame rate (FPS) measurement for third-party games is marked as Unavailable on standard Android sandbox.",
                         possibleCausesAndOutcomes = "Android security architecture isolates third-party app processes. Without system root privileges or vendor-specific OEM accessibility permissions, ordinary Android apps cannot inject overlay hooks or inspect other games' SurfaceFlinger rendering pipelines.",
-                        suggestedAction = "Use your device OEM Game Center overlay if available, or observe visual frame smoothness while monitoring hardware thermal status in GAMEBOOST.",
+                        suggestedAction = "Use your device OEM Game Center overlay if available, or observe visual frame smoothness while monitoring hardware thermal status in ZeroX Boost.",
                         severity = RuleSeverity.INFO,
                         confidenceLabel = "[FACT: Android Security Architecture Sandbox]"
                     )
@@ -379,7 +379,7 @@ object PerformanceAdvisorEngine {
                 thermalStrategy = "Free Fire engine operates at lower shader complexity when Graphics is set to Smooth, reducing thermal dissipation by ~30%.",
                 batteryStrategy = "Disable High Resolution in Free Fire display options to reduce GPU memory bandwidth and save battery.",
                 networkStrategy = "Free Fire multiplayer tick rate benefits from 5GHz Wi-Fi to reduce TCP packet retransmission jitter.",
-                realisticLimitations = "Adjusting settings inside Free Fire options reduces GPU workload. GAMEBOOST does not alter game files or bypass in-game frame rate caps.",
+                realisticLimitations = "Adjusting settings inside Free Fire options reduces GPU workload. ZeroX Boost does not alter game files or bypass in-game frame rate caps.",
                 confidenceLabel = "[FACT: Garena Free Fire User Settings Standard]"
             )
 
@@ -392,7 +392,7 @@ object PerformanceAdvisorEngine {
                 thermalStrategy = "Unreal Engine 4 in PUBG runs significantly cooler on Smooth graphics, preventing thermal throttling mid-match.",
                 batteryStrategy = "Set Color Style to Classic instead of Realistic to reduce dynamic post-processing calculations.",
                 networkStrategy = "Use 5GHz Wi-Fi or LTE. High network jitter causes rubberbanding and hit-registration delays.",
-                realisticLimitations = "FPS is bound by your device GPU capability and PUBG in-game graphics selection. GAMEBOOST cannot force 90 FPS if your phone lacks official support.",
+                realisticLimitations = "FPS is bound by your device GPU capability and PUBG in-game graphics selection. ZeroX Boost cannot force 90 FPS if your phone lacks official support.",
                 confidenceLabel = "[FACT: Krafton UE4 Performance Guidelines]"
             )
 

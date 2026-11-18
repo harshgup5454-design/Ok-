@@ -51,10 +51,10 @@ fun ReportsScreen(
     onNavigateToPremium: () -> Unit = {}
 ) {
     var sessionLabel by remember { mutableStateOf("") }
-    val selectedGame by remember { mutableStateOf("BGMI / PUBG Mobile") }
+    var selectedGame by remember { mutableStateOf("BGMI / PUBG Mobile") }
     var graphicsSettings by remember { mutableStateOf("Smooth + Ultra (Shadows OFF)") }
     var selectedFpsSource by remember { mutableStateOf("None (FPS Unavailable)") }
-    val userNotes by remember { mutableStateOf("") }
+    var userNotes by remember { mutableStateOf("") }
 
     var showStopDialog by remember { mutableStateOf(false) }
     var inputAvgFpsText by remember { mutableStateOf("") }
@@ -163,11 +163,46 @@ fun ReportsScreen(
                         )
 
                         OutlinedTextField(
+                            value = selectedGame,
+                            onValueChange = { selectedGame = it },
+                            label = { Text("Target Game Title", fontSize = 12.sp) },
+                            placeholder = { Text("e.g. BGMI / Free Fire MAX / Call of Duty", fontSize = 12.sp) },
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("reports_game_title_input"),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = NeonCyan,
+                                unfocusedBorderColor = DarkSurfaceBorder,
+                                focusedContainerColor = DarkSurfaceElevated,
+                                unfocusedContainerColor = DarkSurfaceElevated
+                            )
+                        )
+
+                        OutlinedTextField(
                             value = graphicsSettings,
                             onValueChange = { graphicsSettings = it },
                             label = { Text("In-Game Graphics Settings", fontSize = 12.sp) },
                             placeholder = { Text("e.g. Smooth + High Cap + Shadows OFF", fontSize = 12.sp) },
                             modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = NeonCyan,
+                                unfocusedBorderColor = DarkSurfaceBorder,
+                                focusedContainerColor = DarkSurfaceElevated,
+                                unfocusedContainerColor = DarkSurfaceElevated
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = userNotes,
+                            onValueChange = { userNotes = it },
+                            label = { Text("Environment / Test Notes (Optional)", fontSize = 12.sp) },
+                            placeholder = { Text("e.g. Off-charger, 5GHz Wi-Fi, 27°C room", fontSize = 12.sp) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("reports_notes_input"),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = NeonCyan,

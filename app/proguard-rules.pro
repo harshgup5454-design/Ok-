@@ -16,10 +16,18 @@
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
-# Room entities and database classes
+# Room entities, DAOs, and database classes
 -keep class com.example.data.*Entity { *; }
+-keep class com.example.data.*Dao { *; }
 -keep class * extends androidx.room.RoomDatabase
+-keep class * extends androidx.room.RoomDatabase$Callback
 -dontwarn androidx.room.paging.**
+
+# Preserve data models, diagnostics, and engines used across ViewModels & Service
+-keep class com.example.data.** { *; }
+-keep class com.example.viewmodel.** { *; }
+-keep class com.example.smartgaming.** { *; }
+-keep class com.example.billing.** { *; }
 
 # Google Play Billing Library
 -keep class com.android.billingclient.api.** { *; }

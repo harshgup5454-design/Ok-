@@ -656,184 +656,184 @@ fun SettingsScreen(
                 }
             }
 
-            // Developer AdMob Diagnostics & Live Status Section
-            item {
-                GameBoostSurfaceCard(
-                    modifier = Modifier.testTag("settings_admob_diagnostics_card")
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+            // Developer AdMob Diagnostics & Live Status Section (Debug builds only)
+            if (BuildConfig.DEBUG) {
+                item {
+                    GameBoostSurfaceCard(
+                        modifier = Modifier.testTag("settings_admob_diagnostics_card")
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(Icons.Default.BugReport, contentDescription = null, tint = NeonOrange, modifier = Modifier.size(20.dp))
-                            Text(
-                                text = "AdMob Diagnostics & Status",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = if (adState.isTestMode) NeonGreen.copy(alpha = 0.15f) else DarkSurfaceBorder
-                        ) {
-                            Text(
-                                text = if (adState.isTestMode) "TEST MODE" else "PRODUCTION",
-                                color = if (adState.isTestMode) NeonGreen else TextSecondary,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Mobile Ads SDK:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                        val sdkLabel = if (adState.isSdkInitialized) {
-                            if (adState.totalAdaptersCount > 0) {
-                                "Initialized (${adState.readyAdaptersCount}/${adState.totalAdaptersCount} ready)"
-                            } else {
-                                "Initialized"
-                            }
-                        } else {
-                            "Standby / Initializing"
-                        }
-                        Text(
-                            text = sdkLabel,
-                            color = if (adState.isSdkInitialized) NeonGreen else NeonOrange,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("UMP Can Request Ads:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                        Text(
-                            text = if (adState.canRequestAds) "Granted / Ready (true)" else "Pending / Restricted (false)",
-                            color = if (adState.canRequestAds) NeonGreen else NeonOrange,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Ad Eligibility:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                        Text(
-                            text = when {
-                                adManager.isAdFreeEntitled() -> "Ad-Free (Pro User)"
-                                !adState.isNetworkAvailable -> "Suppressed (Offline)"
-                                !adState.canRequestAds -> "Suppressed (No Consent)"
-                                else -> "Eligible (Idle Browsing)"
-                            },
-                            color = if (!adManager.isAdFreeEntitled() && adState.canRequestAds && adState.isNetworkAvailable) NeonGreen else TextMuted,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Placements Live Status:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                            Text(
-                                text = "Home: ${adState.homeBannerStatus.name} | Native: ${adState.nativeSponsoredStatus.name}",
-                                color = TextPrimary,
-                                fontSize = 11.sp
-                            )
-                        }
-                        val lastLoc = adState.lastBannerLocation
-                        if (lastLoc != null) {
-                            Text(
-                                text = "Latest Banner (${lastLoc.name}): ${adState.lastBannerStatus.name} | Reports Banner: ${adState.reportsBannerStatus.name}",
-                                color = TextMuted,
-                                fontSize = 10.sp
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Ad Outcome Counters:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                        Text(
-                            text = "Req: ${adState.totalRequestsCount} | Loaded: ${adState.totalLoadedCount} | NoFill: ${adState.noFillCount} | Err: ${adState.failedCount}",
-                            style = TelemetryMonoStyle.copy(fontSize = 10.5.sp),
-                            color = NeonCyan
-                        )
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        val errHeading = if (adState.lastErrorCode != null) {
-                            "Last Load Outcome (Error Code ${adState.lastErrorCode}):"
-                        } else {
-                            "Last Load Outcome / Error:"
-                        }
-                        Text(errHeading, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp),
-                            color = DarkBackground
-                        ) {
-                            Text(
-                                text = adState.lastAdError ?: "No errors recorded.",
-                                color = if (adState.lastAdError != null) NeonOrange else TextMuted,
-                                fontSize = 11.sp,
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
-                    }
-
-                    Button(
-                        onClick = {
-                            val act = context.findActivity()
-                            if (act != null) {
-                                adManager.retryConsentAndSdkFlow(act)
-                                privacyActionFeedback = "Re-requesting UMP consent and initializing Mobile Ads..."
-                            } else {
-                                privacyActionFeedback = "Activity unavailable for consent retry."
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.BugReport, contentDescription = null, tint = NeonOrange, modifier = Modifier.size(20.dp))
+                                Text(
+                                    text = "AdMob Diagnostics & Status",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = TextPrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp)
-                            .testTag("settings_retry_admob_button"),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = NeonCyan)
-                    ) {
-                        Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Retry Consent & SDK Initialization",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    }
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = if (adState.isTestMode) NeonGreen.copy(alpha = 0.15f) else DarkSurfaceBorder
+                            ) {
+                                Text(
+                                    text = if (adState.isTestMode) "TEST MODE" else "PRODUCTION",
+                                    color = if (adState.isTestMode) NeonGreen else TextSecondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
 
-                    if (BuildConfig.DEBUG) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Mobile Ads SDK:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                            val sdkLabel = if (adState.isSdkInitialized) {
+                                if (adState.totalAdaptersCount > 0) {
+                                    "Initialized (${adState.readyAdaptersCount}/${adState.totalAdaptersCount} ready)"
+                                } else {
+                                    "Initialized"
+                                }
+                            } else {
+                                "Standby / Initializing"
+                            }
+                            Text(
+                                text = sdkLabel,
+                                color = if (adState.isSdkInitialized) NeonGreen else NeonOrange,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("UMP Can Request Ads:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                            Text(
+                                text = if (adState.canRequestAds) "Granted / Ready (true)" else "Pending / Restricted (false)",
+                                color = if (adState.canRequestAds) NeonGreen else NeonOrange,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Ad Eligibility:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                            Text(
+                                text = when {
+                                    adManager.isAdFreeEntitled() -> "Ad-Free (Pro User)"
+                                    !adState.isNetworkAvailable -> "Suppressed (Offline)"
+                                    !adState.canRequestAds -> "Suppressed (No Consent)"
+                                    else -> "Eligible (Idle Browsing)"
+                                },
+                                color = if (!adManager.isAdFreeEntitled() && adState.canRequestAds && adState.isNetworkAvailable) NeonGreen else TextMuted,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Placements Live Status:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                                Text(
+                                    text = "Home: ${adState.homeBannerStatus.name} | Native: ${adState.nativeSponsoredStatus.name}",
+                                    color = TextPrimary,
+                                    fontSize = 11.sp
+                                )
+                            }
+                            val lastLoc = adState.lastBannerLocation
+                            if (lastLoc != null) {
+                                Text(
+                                    text = "Latest Banner (${lastLoc.name}): ${adState.lastBannerStatus.name} | Reports Banner: ${adState.reportsBannerStatus.name}",
+                                    color = TextMuted,
+                                    fontSize = 10.sp
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Ad Outcome Counters:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                            Text(
+                                text = "Req: ${adState.totalRequestsCount} | Loaded: ${adState.totalLoadedCount} | NoFill: ${adState.noFillCount} | Err: ${adState.failedCount}",
+                                style = TelemetryMonoStyle.copy(fontSize = 10.5.sp),
+                                color = NeonCyan
+                            )
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            val errHeading = if (adState.lastErrorCode != null) {
+                                "Last Load Outcome (Error Code ${adState.lastErrorCode}):"
+                            } else {
+                                "Last Load Outcome / Error:"
+                            }
+                            Text(errHeading, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(8.dp),
+                                color = DarkBackground
+                            ) {
+                                Text(
+                                    text = adState.lastAdError ?: "No errors recorded.",
+                                    color = if (adState.lastAdError != null) NeonOrange else TextMuted,
+                                    fontSize = 11.sp,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = {
+                                val act = context.findActivity()
+                                if (act != null) {
+                                    adManager.retryConsentAndSdkFlow(act)
+                                    privacyActionFeedback = "Re-requesting UMP consent and initializing Mobile Ads..."
+                                } else {
+                                    privacyActionFeedback = "Activity unavailable for consent retry."
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp)
+                                .testTag("settings_retry_admob_button"),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan)
+                        ) {
+                            Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Retry Consent & SDK Initialization",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()

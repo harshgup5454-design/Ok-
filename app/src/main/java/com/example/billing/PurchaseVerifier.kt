@@ -128,7 +128,7 @@ class PlayPurchasePreCheckVerifier(
         val matchingProductId = request.productIds.firstOrNull { it in allowedProductIds }
             ?: return PurchaseVerificationResult.Rejected(
                 productIds = request.productIds,
-                reason = "Product ID not in configured GAMEBOOST Pro catalog."
+                reason = "Product ID not in configured ZeroX Boost Pro catalog."
             )
 
         if (requirePlaySignature && (request.originalJson.isBlank() || request.signature.isBlank())) {

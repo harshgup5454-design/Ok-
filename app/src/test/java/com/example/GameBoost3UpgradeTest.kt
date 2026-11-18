@@ -309,7 +309,7 @@ class GameBoost3UpgradeTest {
             }
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("GAMING AUTOPILOT 3.0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ZEROX GAMING AUTOPILOT").assertIsDisplayed()
         composeTestRule.onNodeWithTag("smart_gaming_lazy_column")
             .performScrollToNode(hasText("N/A (Not Tested)"))
         composeTestRule.onNodeWithText("N/A (Not Tested)").assertIsDisplayed()
@@ -318,6 +318,12 @@ class GameBoost3UpgradeTest {
         composeTestRule.onNodeWithText("Maximum Stability").assertIsDisplayed()
         composeTestRule.onNodeWithText("Balanced Gaming").assertIsDisplayed()
         composeTestRule.onNodeWithText("Battery Friendly").assertIsDisplayed()
+    }
+
+    @Test
+    fun testBenchmarkRepositoryStartsWithoutFabricatedSessions() {
+        val initialSessions = BenchmarkRepository.getAllSessions()
+        assertTrue(initialSessions.isEmpty())
     }
 }
 

@@ -104,7 +104,7 @@ object PermissionManager {
                 title = "Display Over Other Apps",
                 featurePurpose = "Floating Gaming Sidebar",
                 rationale = "Required to display the floating gaming handle and quick telemetry sidebar while you play a game.",
-                settingsStepHint = "In Android Settings, locate GameBoost and enable 'Allow display over other apps'.",
+                settingsStepHint = "In Android Settings, locate ZeroX Boost and enable 'Allow display over other apps'.",
                 isRequiredForOverlay = true,
                 isRuntimePermission = false,
                 status = overlayStatus
@@ -114,7 +114,7 @@ object PermissionManager {
                 title = "Usage Access",
                 featurePurpose = "Optional Auto Game Detection",
                 rationale = "Optional. Used only when Autopilot auto-detection is enabled to see which game is currently in the foreground. All checks stay local on-device.",
-                settingsStepHint = "In Usage Access settings, select GameBoost and turn on 'Permit usage access'.",
+                settingsStepHint = "In Usage Access settings, select ZeroX Boost and turn on 'Permit usage access'.",
                 isRequiredForOverlay = false,
                 isRuntimePermission = false,
                 status = usageStatus
@@ -128,7 +128,7 @@ object PermissionManager {
                 } else {
                     "Notification runtime permission is handled automatically on Android 12 and earlier."
                 },
-                settingsStepHint = "Allow GameBoost notifications so the persistent sidebar service notification can appear cleanly.",
+                settingsStepHint = "Allow ZeroX Boost notifications so the persistent sidebar service notification can appear cleanly.",
                 isRequiredForOverlay = false,
                 isRuntimePermission = sdkInt >= Build.VERSION_CODES.TIRAMISU,
                 status = notifStatus,
@@ -138,8 +138,8 @@ object PermissionManager {
                 type = AppPermissionType.WRITE_SETTINGS,
                 title = "Modify System Settings",
                 featurePurpose = "Optional Display & Rotation Profiles",
-                rationale = "Optional. Needed only if you want GAMEBOOST profiles to apply screen brightness, screen timeout, and auto-rotate lock, then restore them when sessions end.",
-                settingsStepHint = "Enable 'Allow modifying system settings' for GameBoost.",
+                rationale = "Optional. Needed only if you want ZeroX Boost profiles to apply screen brightness, screen timeout, and auto-rotate lock, then restore them when sessions end.",
+                settingsStepHint = "Enable 'Allow modifying system settings' for ZeroX Boost.",
                 isRequiredForOverlay = false,
                 isRuntimePermission = false,
                 status = writeStatus
@@ -149,7 +149,7 @@ object PermissionManager {
                 title = "Do Not Disturb Access",
                 featurePurpose = "Optional Call & Alert Quieting",
                 rationale = "Optional. Needed only if you want gaming profiles to switch Do Not Disturb mode during a session and restore your previous state afterward.",
-                settingsStepHint = "Find GameBoost under Do Not Disturb access and toggle it on.",
+                settingsStepHint = "Find ZeroX Boost under Do Not Disturb access and toggle it on.",
                 isRequiredForOverlay = false,
                 isRuntimePermission = false,
                 status = dndStatus

@@ -100,8 +100,8 @@ fun SessionAnalyticsOverviewCard(
                 label = "Avg Est. Battery Drain",
                 value = summary.averageEstimatedDrainPercent?.let {
                     String.format(Locale.US, "%.1f%%", it)
-                } ?: "N/A (Charged)",
-                subvalue = "Discharging runs",
+                } ?: if (summary.weeklySessionCount == 0 && summary.dailySessionCount == 0) "N/A" else "N/A (Charged)",
+                subvalue = if (summary.weeklySessionCount == 0 && summary.dailySessionCount == 0) "No sessions yet" else "Discharging runs",
                 accentColor = NeonOrange
             )
             AnalyticsMetricBox(

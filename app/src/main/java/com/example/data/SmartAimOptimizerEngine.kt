@@ -51,7 +51,7 @@ data class SmartAimControlState(
     val selectedGame: String = "Free Fire MAX",
     val activeProfileId: String? = null,
     val activeProfileName: String = "Free Fire MAX (Balanced)",
-    val lastSessionFeedback: String = "Standard sensitivity baseline ready. Practice in GAMEBOOST Aim Lab.",
+    val lastSessionFeedback: String = "Standard sensitivity baseline ready. Practice in ZeroX Boost Aim Lab.",
     val lastSessionTimestamp: Long = 0L,
     val autoAppliedNotification: String? = null
 )

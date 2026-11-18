@@ -119,7 +119,7 @@ class PerformanceAdvisorTest {
         assertNotNull(rec)
         assertTrue(rec!!.measuredFact.contains("88%"))
         assertTrue(rec.possibleCausesAndOutcomes.contains("LMK"))
-        assertTrue(rec.suggestedAction.contains("GAMEBOOST does not automatically kill background processes"))
+        assertTrue(rec.suggestedAction.contains("ZeroX Boost does not automatically kill background processes"))
     }
 
     @Test
@@ -138,7 +138,7 @@ class PerformanceAdvisorTest {
         val rec = recs92.find { it.ruleId == PerformanceAdvisorEngine.RULE_LOW_STORAGE }
         assertNotNull(rec)
         assertTrue(rec!!.measuredFact.contains("92%"))
-        assertTrue(rec.suggestedAction.contains("GAMEBOOST never deletes user files automatically"))
+        assertTrue(rec.suggestedAction.contains("ZeroX Boost never deletes user files automatically"))
     }
 
     @Test

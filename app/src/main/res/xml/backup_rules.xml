@@ -6,8 +6,6 @@
    See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
+    <!-- Strict allowlist: only user overlay preferences are backed up; device-specific state and local Room DB are excluded -->
     <include domain="sharedpref" path="gameboost_overlay_prefs.xml" />
-    <exclude domain="database" path="gameboost_database" />
-    <exclude domain="sharedpref" path="gameboost_permissions_prefs.xml" />
-    <exclude domain="sharedpref" path="gameboost_session_restore.xml" />
 </full-backup-content>

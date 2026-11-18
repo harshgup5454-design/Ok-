@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -345,11 +347,20 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             ) { innerPadding ->
-                                NavHost(
-                                    navController = navController,
-                                    startDestination = Screen.Dashboard.route,
-                                    modifier = Modifier.padding(innerPadding)
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(DarkBackground)
+                                        .padding(innerPadding),
+                                    contentAlignment = Alignment.TopCenter
                                 ) {
+                                    NavHost(
+                                        navController = navController,
+                                        startDestination = Screen.Dashboard.route,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .widthIn(max = 720.dp)
+                                    ) {
                                     composable(Screen.Dashboard.route) {
                                         DashboardScreen(
                                             stats = deviceStats,
@@ -533,7 +544,10 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                     composable(Screen.Premium.route) {
-                                        PremiumScreen(billingManager = GooglePlayBillingManager)
+                                        PremiumScreen(
+                                            billingManager = GooglePlayBillingManager,
+                                            onBackClick = { navController.popBackStack() }
+                                        )
                                     }
                                     composable(Screen.SmartGaming.route) {
                                         var autopilotPermFeedback by remember { mutableStateOf<String?>(null) }
@@ -771,6 +785,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         )
                                     }
+                                }
                                 }
                             }
                         }

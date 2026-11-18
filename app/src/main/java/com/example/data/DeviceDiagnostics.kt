@@ -263,7 +263,7 @@ object DeviceDiagnosticsEngine {
 
         val guidance = "Android enforces strict sandbox security. Ordinary applications cannot view or delete files " +
                 "belonging to other apps or system partitions. To safely reclaim device storage, visit Android System Settings > " +
-                "Storage. GAMEBOOST never deletes personal files or game content automatically."
+                "Storage. ZeroX Boost never deletes personal files or game content automatically."
 
         return StorageDiagnosticData(
             totalInternalGb = String.format(java.util.Locale.US, "%.1f", totalGb).toFloat(),
@@ -505,7 +505,7 @@ object DeviceDiagnosticsEngine {
         )
 
         val sandboxExplanation = "Android SELinux isolates app process memories and restricts arbitrary hardware manipulation. " +
-                "GAMEBOOST operates in full compliance with Android security policies without root access or dangerous permissions."
+                "ZeroX Boost operates in full compliance with Android security policies without root access or dangerous permissions."
 
         return SystemCompatibilityData(
             androidVersion = Build.VERSION.RELEASE,
@@ -556,7 +556,7 @@ object DeviceDiagnosticsEngine {
             actions.add("Internal storage headroom is low (${storage.availableInternalGb} GB free). Free up storage via Android Settings to prevent asset streaming stutters.")
         }
         if (!system.overlayPermissionGranted) {
-            actions.add("Grant 'Display over other apps' permission to enable the GAMEBOOST in-game floating toolbox.")
+            actions.add("Grant 'Display over other apps' permission to enable the ZeroX Boost in-game floating toolbox.")
         }
         if (display.currentRefreshRateHz > 60f && battery.temperatureC >= 38f) {
             actions.add("Display is currently set to ${display.currentRefreshRateHz.toInt()} Hz. Switching to 60 Hz in Display Settings saves ~15% GPU/display power envelope.")
@@ -566,7 +566,7 @@ object DeviceDiagnosticsEngine {
         }
 
         val exportable = StringBuilder().apply {
-            appendLine("=== GAMEBOOST DEVICE DIAGNOSTIC REPORT ===")
+            appendLine("=== ZEROX BOOST DEVICE DIAGNOSTIC REPORT ===")
             appendLine("Generated: ${java.util.Date(timestamp)}")
             appendLine("Device: $deviceModel")
             appendLine("OS: Android ${system.androidVersion} (SDK ${system.sdkInt}, Patch ${system.securityPatch})")
@@ -574,7 +574,7 @@ object DeviceDiagnosticsEngine {
             appendLine("------------------------------------------")
             appendLine("1. STORAGE DIAGNOSTICS")
             appendLine("   • Internal: ${storage.availableInternalGb} GB available / ${storage.totalInternalGb} GB total (${storage.usagePercent}% used)")
-            appendLine("   • GAMEBOOST Cache: ${storage.totalAppFootprintFormatted}")
+            appendLine("   • ZeroX Boost Cache: ${storage.totalAppFootprintFormatted}")
             appendLine("2. DISPLAY DIAGNOSTICS")
             appendLine("   • Resolution: ${display.resolutionPx} (${display.resolutionDp})")
             appendLine("   • Density: ${display.densityDpi} DPI (${display.densityCategory})")
